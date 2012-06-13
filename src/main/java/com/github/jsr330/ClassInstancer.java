@@ -13,8 +13,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -83,6 +85,7 @@ public class ClassInstancer {
     
     protected Map<String, Provider<?>> providers = new TreeMap<String, Provider<?>>();
     protected Map<String, Object> singletons = new TreeMap<String, Object>();
+    protected Set<String> injectedStaticMembers = new TreeSet<String>();
     
     @SuppressWarnings("unchecked")
     public <T> T instance(Class<T> type, Map<String, List<Class<?>>> inheritanceTree, ClassLoader classLoader) {
@@ -138,7 +141,6 @@ public class ClassInstancer {
                     typeContainer = new TypeContainer();
                     typeContainer.type = type;
                     typeContainer.constructor = ctor;
-                    
                     fillTypeContainer(typeContainer);
                     injectTypeContainer(typeContainer, inst, inheritanceTree, classLoader);
                     
@@ -185,27 +187,37 @@ public class ClassInstancer {
         List<Method> methods = new ArrayList<Method>();
         List<Method> toRemove = new ArrayList<Method>();
         Map<String, Method> map = new HashMap<String, Method>();
-        StringBuilder key = new StringBuilder();
-        String tmp;
+        StringBuilder tmp = new StringBuilder();
+        String pckKey, shortKey;
         boolean candidate;
         Method oldMethod;
         int mod;
+        String pckName;
         
         for (InjectionSet set : typeContainer.injectionSets) {
             methods.clear();
             for (Method method : set.type.getDeclaredMethods()) {
-                key.delete(0, key.length());
-                key.append(method.getReturnType()).append(' ').append(method.getName()).append(' ').append(Arrays.toString(method.getParameterTypes()));
-                tmp = key.toString();
-                
+                if (Modifier.isStatic(method.getModifiers()) && injectedStaticMembers.contains(method.toString())) {
+                    continue;
+                }
                 candidate = method.isAnnotationPresent(Inject.class) && !Modifier.isAbstract(method.getModifiers());
+                pckName = method.getDeclaringClass().getPackage().getName() + ' ';
                 
-                if (map.containsKey(tmp)) {
-                    if ((oldMethod = map.get(tmp)) != null) {
-                        mod = oldMethod.getModifiers();
-                        if (!(Modifier.isPrivate(mod) || Modifier.isStatic(mod) || mod == 0)) {
-                            toRemove.add(map.get(tmp));
-                        }
+                tmp.delete(0, tmp.length());
+                tmp.append(method.getReturnType()).append(' ').append(method.getName()).append(' ').append(Arrays.toString(method.getParameterTypes()));
+                shortKey = tmp.toString();
+                tmp.insert(0, pckName);
+                pckKey = tmp.toString();
+                
+                if (map.containsKey(pckKey) && (oldMethod = map.get(pckKey)) != null) {
+                    mod = oldMethod.getModifiers();
+                    if (!(Modifier.isPrivate(mod) || Modifier.isStatic(mod) || mod == 0) || isSamePackage(oldMethod, method)) {
+                        toRemove.add(map.get(pckKey));
+                    }
+                } else if (map.containsKey(shortKey) && (oldMethod = map.get(shortKey)) != null) {
+                    mod = oldMethod.getModifiers();
+                    if (Modifier.isPublic(mod) || Modifier.isProtected(mod)) {
+                        toRemove.add(map.get(shortKey));
                     }
                 }
                 
@@ -214,7 +226,8 @@ public class ClassInstancer {
                         method.setAccessible(true);
                     }
                     
-                    map.put(tmp, method);
+                    map.put(pckKey, method);
+                    map.put(shortKey, method);
                     methods.add(method);
                 }
             }
@@ -226,11 +239,18 @@ public class ClassInstancer {
             for (Method method : set.methods) {
                 if (!toRemove.contains(method)) {
                     methods.add(method);
+                    if (Modifier.isStatic(method.getModifiers())) {
+                        injectedStaticMembers.add(method.toString());
+                    }
                 }
             }
             set.methods = methods.toArray(new Method[] {});
             Arrays.sort(set.methods, METHOD_COMPARATOR);
         }
+    }
+    
+    protected boolean isSamePackage(Method oldMethod, Method method) {
+        return oldMethod.getDeclaringClass().getPackage().equals(method.getDeclaringClass().getPackage());
     }
     
     protected void fillFields(TypeContainer typeContainer) {
@@ -246,7 +266,14 @@ public class ClassInstancer {
                         if (!field.isAccessible()) {
                             field.setAccessible(true);
                         }
+                        if (Modifier.isStatic(field.getModifiers()) && injectedStaticMembers.contains(field.toString())) {
+                            continue;
+                        }
+                        
                         list.add(field);
+                        if (Modifier.isStatic(field.getModifiers())) {
+                            injectedStaticMembers.add(field.toString());
+                        }
                     }
                 }
             }
@@ -298,9 +325,6 @@ public class ClassInstancer {
             try {
                 LOGGER.debug("injectMethods - method injected {} of {}", method, set.type);
                 arguments = getArguments(method, inheritanceTree, classLoader);
-                if (method.getName().equals("supertypeStaticMethodInjection")) {
-                    System.out.println(method.toString());
-                }
                 if (arguments != null) {
                     method.invoke(inst, arguments);
                 } else {
