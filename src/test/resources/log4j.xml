@@ -10,9 +10,15 @@
 		</layout>
 	</appender>
 
-	<logger name="com.github.rstiller.testing">
+	<logger name="com.github.jsr330">
 		<level value="error" />
 	</logger>
+    <logger name="com.github.jsr330.ClassScanner">
+        <level value="error" />
+    </logger>
+    <logger name="com.github.jsr330.ClassAnalyser">
+        <level value="error" />
+    </logger>
 
 	<root>
 		<priority value="info" />
