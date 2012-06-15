@@ -15,24 +15,37 @@
  */
 package com.github.jsr330;
 
-import java.util.List;
 import java.util.Map;
+
+import com.github.jsr330.analysis.ClassAnalyser;
+import com.github.jsr330.analysis.InheritanceAnalyser;
+import com.github.jsr330.instance.ClassInstancer;
+import com.github.jsr330.instance.DefaultClassInstancer;
+import com.github.jsr330.scanning.ClassScanner;
+import com.github.jsr330.scanning.DefaultClassScanner;
 
 public class Injector {
     
     protected ClassLoader classLoader;
-    protected ClassScanner scanner = new ClassScanner();
-    protected ClassAnalyser analyser = new ClassAnalyser();
-    protected ClassInstancer instancer = new ClassInstancer();
+    protected ClassScanner scanner = new DefaultClassScanner();
+    protected ClassAnalyser<Map<String, Class<?>[]>> analyser = new InheritanceAnalyser();
+    protected ClassInstancer instancer = new DefaultClassInstancer();
     protected Map<String, Class<?>> classes;
-    protected Map<String, List<Class<?>>> inheritance;
+    protected Map<String, Class<?>[]> inheritance;
     
     public Injector() {
-        this(Thread.currentThread().getContextClassLoader());
+        this(Thread.currentThread().getContextClassLoader(), null, null, null);
     }
     
     public Injector(ClassLoader classLoader) {
+        this(classLoader, null, null, null);
+    }
+    
+    public Injector(ClassLoader classLoader, ClassScanner scanner, ClassAnalyser<Map<String, Class<?>[]>> analyser, ClassInstancer instancer) {
         this.classLoader = classLoader;
+        this.scanner = scanner;
+        this.analyser = analyser;
+        this.instancer = instancer;
         update();
     }
     
@@ -45,8 +58,40 @@ public class Injector {
     }
     
     public void update() {
-        classes = scanner.listClasses(classLoader);
-        inheritance = analyser.getInheritanceTree(classes);
+        classes = scanner.scan(classLoader);
+        inheritance = analyser.analyse(classes);
+    }
+    
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+    
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+    
+    public ClassScanner getScanner() {
+        return scanner;
+    }
+    
+    public void setScanner(ClassScanner scanner) {
+        this.scanner = scanner;
+    }
+    
+    public ClassAnalyser<Map<String, Class<?>[]>> getAnalyser() {
+        return analyser;
+    }
+    
+    public void setAnalyser(ClassAnalyser<Map<String, Class<?>[]>> analyser) {
+        this.analyser = analyser;
+    }
+    
+    public ClassInstancer getInstancer() {
+        return instancer;
+    }
+    
+    public void setInstancer(ClassInstancer instancer) {
+        this.instancer = instancer;
     }
     
 }

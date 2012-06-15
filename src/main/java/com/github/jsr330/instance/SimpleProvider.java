@@ -1,7 +1,6 @@
-package com.github.jsr330;
+package com.github.jsr330.instance;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Provider;
@@ -10,22 +9,21 @@ public class SimpleProvider implements Provider<Object> {
     
     protected Class<?> type;
     protected ClassInstancer instancer;
-    protected Map<String, List<Class<?>>> inheritanceTree;
+    protected Map<String, Class<?>[]> inheritanceTree;
     protected ClassLoader classLoader;
-    protected Annotation[] annotations;
+    protected Annotation qualifier;
     
-    public SimpleProvider(Class<?> type, ClassInstancer instancer, Map<String, List<Class<?>>> inheritanceTree, Annotation[] annotations,
-            ClassLoader classLoader) {
+    public SimpleProvider(Class<?> type, ClassInstancer instancer, Map<String, Class<?>[]> inheritanceTree, Annotation qualifier, ClassLoader classLoader) {
         this.type = type;
         this.instancer = instancer;
         this.inheritanceTree = inheritanceTree;
-        this.annotations = annotations;
+        this.qualifier = qualifier;
         this.classLoader = classLoader;
     }
     
     @Override
     public Object get() {
-        return instancer.instance(type, null, annotations, inheritanceTree, classLoader);
+        return instancer.instance(type, inheritanceTree, classLoader, null, qualifier);
     }
     
 }

@@ -10,13 +10,13 @@
 		</layout>
 	</appender>
 
-	<logger name="com.github.jsr330">
+	<logger name="com.github.jsr330.instance">
 		<level value="error" />
 	</logger>
-    <logger name="com.github.jsr330.ClassScanner">
+    <logger name="com.github.jsr330.scanning">
         <level value="error" />
     </logger>
-    <logger name="com.github.jsr330.ClassAnalyser">
+    <logger name="com.github.jsr330.analysis">
         <level value="error" />
     </logger>
 

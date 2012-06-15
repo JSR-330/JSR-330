@@ -1,4 +1,4 @@
-package com.github.jsr330;
+package com.github.jsr330.analysis;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -10,12 +10,14 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClassAnalyser {
+public class InheritanceAnalyser implements ClassAnalyser<Map<String, Class<?>[]>> {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassAnalyser.class);
+    private static final Class<?>[] EMPTY_ARRAY = new Class<?>[] {};
+    private static final Logger LOGGER = LoggerFactory.getLogger(InheritanceAnalyser.class);
     
-    public Map<String, List<Class<?>>> getInheritanceTree(Map<String, Class<?>> classes) {
-        Map<String, List<Class<?>>> inheritances = new TreeMap<String, List<Class<?>>>();
+    @Override
+    public Map<String, Class<?>[]> analyse(Map<String, Class<?>> classes) {
+        Map<String, Class<?>[]> inheritances = new TreeMap<String, Class<?>[]>();
         List<Class<?>> tmp;
         Set<String> classNames = classes.keySet();
         Class<?> type;
@@ -36,7 +38,7 @@ public class ClassAnalyser {
                 }
             }
             if (tmp != null && !tmp.isEmpty()) {
-                inheritances.put(entry.getKey(), tmp);
+                inheritances.put(entry.getKey(), tmp.toArray(EMPTY_ARRAY));
             }
         }
         
