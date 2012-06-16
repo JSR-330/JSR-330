@@ -48,9 +48,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git@github.com:JSR-330/jsr330.git</connection>
-		<developerConnection>scm:git:git@github.com:JSR-330/jsr330.git</developerConnection>
-		<url>git@github.com:JSR-330/jsr330.git</url>
+		<connection>scm:git:git@github.com:JSR-330/JSR-330.git</connection>
+		<developerConnection>scm:git:git@github.com:JSR-330/JSR-330.git</developerConnection>
+		<url>git@github.com:JSR-330/JSR-330.git</url>
 	</scm>
 
 	<build>
