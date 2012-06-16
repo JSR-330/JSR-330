@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2012-06-16T20:15:04.107">
+<file name="D:\git\jsr330\src\main\java\com\github\jsr330\instance\DefaultClassInjector.java">
+<violation beginline="87" endline="89" begincolumn="21" endcolumn="21" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="com.github.jsr330.instance" class="DefaultClassInjector" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="D:\git\jsr330\src\main\java\com\github\jsr330\scanning\DefaultClassScanner.java">
+<violation beginline="74" endline="76" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="com.github.jsr330.scanning" class="DefaultClassScanner" method="scan" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+</pmd>
