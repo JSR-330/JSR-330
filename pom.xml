@@ -10,7 +10,7 @@
 
 	<groupId>com.github.jsr330</groupId>
 	<artifactId>core</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>jsr330</name>
 
@@ -120,6 +120,9 @@
 					</systemPropertyVariables>
 					<forkMode>once</forkMode>
 					<runOrder>alphabetical</runOrder>
+                    <includes>
+                        <include>**/*Tck.java</include>
+                    </includes>
 				</configuration>
 				<dependencies>
 					<dependency>
