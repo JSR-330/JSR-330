@@ -21,13 +21,13 @@ public class DefaultTypeDeterminator implements TypeDeterminator {
             } else {
                 namePrefix = qualifier.annotationType().getSimpleName();
             }
-        }
-        
-        if (candidates != null && namePrefix.trim().length() > 0) {
-            for (Class<?> candidate : candidates) {
-                if (candidate.getSimpleName().toLowerCase().startsWith(namePrefix.toLowerCase())) {
-                    LOGGER.debug("determineClass - returning decent {} for {}", candidate, type);
-                    return candidate;
+            
+            if (candidates != null) {
+                for (Class<?> candidate : candidates) {
+                    if (candidate.getSimpleName().toLowerCase().startsWith(namePrefix.toLowerCase())) {
+                        LOGGER.debug("determineClass - returning decent {} for {}", candidate, type);
+                        return candidate;
+                    }
                 }
             }
         }

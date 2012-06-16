@@ -19,8 +19,8 @@ import java.util.Map;
 
 import com.github.jsr330.analysis.ClassAnalyser;
 import com.github.jsr330.analysis.InheritanceAnalyser;
-import com.github.jsr330.instance.ClassInstancer;
-import com.github.jsr330.instance.DefaultClassInstancer;
+import com.github.jsr330.instance.ClassInjector;
+import com.github.jsr330.instance.DefaultClassInjector;
 import com.github.jsr330.scanning.ClassScanner;
 import com.github.jsr330.scanning.DefaultClassScanner;
 
@@ -29,7 +29,7 @@ public class Injector {
     protected ClassLoader classLoader;
     protected ClassScanner scanner = new DefaultClassScanner();
     protected ClassAnalyser<Map<String, Class<?>[]>> analyser = new InheritanceAnalyser();
-    protected ClassInstancer instancer = new DefaultClassInstancer();
+    protected ClassInjector instancer = new DefaultClassInjector();
     protected Map<String, Class<?>> classes;
     protected Map<String, Class<?>[]> inheritance;
     
@@ -41,7 +41,7 @@ public class Injector {
         this(classLoader, null, null, null);
     }
     
-    public Injector(ClassLoader classLoader, ClassScanner scanner, ClassAnalyser<Map<String, Class<?>[]>> analyser, ClassInstancer instancer) {
+    public Injector(ClassLoader classLoader, ClassScanner scanner, ClassAnalyser<Map<String, Class<?>[]>> analyser, ClassInjector instancer) {
         this.classLoader = classLoader;
         this.scanner = scanner;
         this.analyser = analyser;
@@ -54,12 +54,13 @@ public class Injector {
             throw new RuntimeException("unknown type: " + type.getName());
         }
         
-        return instancer.instance(type, inheritance, classLoader);
+        return instancer.instance(type, inheritance, classLoader, null, null);
     }
     
     public void update() {
         classes = scanner.scan(classLoader);
         inheritance = analyser.analyse(classes);
+        instancer.injectStaticMembers(classes, inheritance, classLoader);
     }
     
     public ClassLoader getClassLoader() {
@@ -86,11 +87,11 @@ public class Injector {
         this.analyser = analyser;
     }
     
-    public ClassInstancer getInstancer() {
+    public ClassInjector getInstancer() {
         return instancer;
     }
     
-    public void setInstancer(ClassInstancer instancer) {
+    public void setInstancer(ClassInjector instancer) {
         this.instancer = instancer;
     }
     

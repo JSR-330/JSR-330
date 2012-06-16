@@ -8,12 +8,12 @@ import javax.inject.Provider;
 public class SimpleProvider implements Provider<Object> {
     
     protected Class<?> type;
-    protected ClassInstancer instancer;
+    protected ClassInjector instancer;
     protected Map<String, Class<?>[]> inheritanceTree;
     protected ClassLoader classLoader;
     protected Annotation qualifier;
     
-    public SimpleProvider(Class<?> type, ClassInstancer instancer, Map<String, Class<?>[]> inheritanceTree, Annotation qualifier, ClassLoader classLoader) {
+    public SimpleProvider(Class<?> type, ClassInjector instancer, Map<String, Class<?>[]> inheritanceTree, Annotation qualifier, ClassLoader classLoader) {
         this.type = type;
         this.instancer = instancer;
         this.inheritanceTree = inheritanceTree;
