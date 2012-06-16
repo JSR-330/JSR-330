@@ -8,9 +8,9 @@
 		<version>7</version>
 	</parent>
 
-	<groupId>com.github.rstiller.jsr330</groupId>
+	<groupId>com.github.jsr330</groupId>
 	<artifactId>core</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>jsr330</name>
 
@@ -26,7 +26,7 @@
 	</properties>
 
 	<inceptionYear>2012</inceptionYear>
-	<url>https://github.com/rstiller/jsr330</url>
+	<url>https://github.com/JSR-330</url>
 	<description>A simple jsr330 implementation</description>
 
 	<contributors>
@@ -48,9 +48,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git@github.com:rstiller/jsr330.git</connection>
-		<developerConnection>scm:git:git@github.com:rstiller/jsr330.git</developerConnection>
-		<url>git@github.com:rstiller/jsr330.git</url>
+		<connection>scm:git:git@github.com:JSR-330/jsr330.git</connection>
+		<developerConnection>scm:git:git@github.com:JSR-330/jsr330.git</developerConnection>
+		<url>git@github.com:JSR-330/jsr330.git</url>
 	</scm>
 
 	<build>
@@ -164,7 +164,7 @@
 				</configuration>
 				<executions>
 					<execution>
-						<phase>install</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>findbugs</goal>
 						</goals>
@@ -175,14 +175,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.0</version>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>site</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -190,9 +182,7 @@
 				<version>2.4</version>
 			</plugin>
 			<plugin>
-				<groupId>
-					com.googlecode.maven-java-formatter-plugin
-				</groupId>
+				<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
 				<artifactId>maven-java-formatter-plugin</artifactId>
 				<version>0.3.1</version>
 				<configuration>
@@ -239,7 +229,7 @@
 				</configuration>
 				<executions>
 					<execution>
-						<phase>verify</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>format</goal>
 						</goals>
@@ -360,6 +350,11 @@
 			<artifactId>mockito-all</artifactId>
 			<version>${mockito.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>javax.inject</groupId>
+		    <artifactId>javax.inject-tck</artifactId>
+		    <version>1</version>
 		</dependency>
 	</dependencies>
 
