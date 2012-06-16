@@ -1,4 +1,5 @@
-# JSR-330 - Dependency Injection for Java (http://jsr-330.github.com/JSR-330/)
+# JSR-330 - Dependency Injection for Java
+(http://jsr-330.github.com/JSR-330/)
 
 This is a simple and easy to integrate implementation of JSR-330 (http://jcp.org/en/jsr/detail?id=330).
 One can instance an ``Injector`` and instantly go for DI. This implementation passes the Technology Compatibility Kit (TCK).
@@ -20,6 +21,16 @@ public class MyTck {
 ## License
 
 Apache 2.0 License (http://www.apache.org/licenses/LICENSE-2.0)
+
+## Integration
+
+```xml
+<dependency>
+    <groupId>com.github.jsr330</groupId>
+    <artifactId>core</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
 
 ## How it works
 
