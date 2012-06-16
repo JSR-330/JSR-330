@@ -164,7 +164,7 @@
 				</configuration>
 				<executions>
 					<execution>
-						<phase>install</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>findbugs</goal>
 						</goals>
@@ -175,14 +175,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.0</version>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>site</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -190,9 +182,7 @@
 				<version>2.4</version>
 			</plugin>
 			<plugin>
-				<groupId>
-					com.googlecode.maven-java-formatter-plugin
-				</groupId>
+				<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
 				<artifactId>maven-java-formatter-plugin</artifactId>
 				<version>0.3.1</version>
 				<configuration>
@@ -239,7 +229,7 @@
 				</configuration>
 				<executions>
 					<execution>
-						<phase>verify</phase>
+						<phase>clean</phase>
 						<goals>
 							<goal>format</goal>
 						</goals>

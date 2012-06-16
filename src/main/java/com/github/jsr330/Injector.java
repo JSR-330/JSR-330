@@ -43,9 +43,15 @@ public class Injector {
     
     public Injector(ClassLoader classLoader, ClassScanner scanner, ClassAnalyser<Map<String, Class<?>[]>> analyser, ClassInjector instancer) {
         this.classLoader = classLoader;
-        this.scanner = scanner;
-        this.analyser = analyser;
-        this.instancer = instancer;
+        if (scanner != null) {
+            this.scanner = scanner;
+        }
+        if (analyser != null) {
+            this.analyser = analyser;
+        }
+        if (instancer != null) {
+            this.instancer = instancer;
+        }
         update();
     }
     
