@@ -60,7 +60,7 @@ A ``ClassScanner`` can be composed of other ``ClassScanner`` instances.
 The advantage is that you can instance a base-ClassScanner, which loads a basic set of classes (this can be a performance penalty)
 and sub-ClassScanner for every jar file that will be dynamically loaded during runtime.
 
-One can filter classes during analysis via filters to. E.g. to only analyse the classes of a specific package.
+One can filter classes during analysis too. E.g. to only analyse the classes of a specific package.
 
 This implementation is made to fast at runtime and not for only be executed at start-up.
 E.g. for a servlet-container that loads applications who need a fast DI implementation and not a full-fledged CDI implementation.
