@@ -1,4 +1,4 @@
-# JSR-330 - Dependency Injection for Java
+# JSR-330 - Dependency Injection for Java (http://jsr-330.github.com/JSR-330/)
 
 This is a simple and easy to integrate implementation of JSR-330 (http://jcp.org/en/jsr/detail?id=330).
 One can instance an ``Injector`` and instantly go for DI. This implementation passes the Technology Compatibility Kit (TCK).
