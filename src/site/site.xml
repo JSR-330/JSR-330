@@ -6,6 +6,10 @@
         <name>${project.name}</name>
         <href>${project.url}</href>
     </bannerLeft>
+    <bannerRight>
+    	<src>http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png</src>
+        <href>https://buildhive.cloudbees.com/</href>
+    </bannerRight>
     <body>
         <links>
             <item name="Apache" href="http://www.apache.org/"/>
