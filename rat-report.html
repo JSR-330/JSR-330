@@ -4,45 +4,47 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>RAT (Release Audit Tool) results</title>
-    <style type="text/css" media="all">
-      @import url("./css/maven-base.css");
-      @import url("./css/maven-theme.css");
-      @import url("./css/site.css");
-    </style>
-    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+    <link rel="stylesheet" href="./css/apache-maven-fluido.min.css" />
+    <link rel="stylesheet" href="./css/site.css" />
+    <link rel="stylesheet" href="./css/print.css" media="print" />
+        <style>body{padding-top: 20px;}</style>
+    
+    <script type="text/javascript" src="./js/apache-maven-fluido.min.js"></script>
+
+    
     <meta name="Date-Revision-yyyymmdd" content="20120616" />
     <meta http-equiv="Content-Language" content="en" />
-        
+    
         </head>
-  <body class="composite">
-    <div id="banner">
-                    <div id="bannerLeft">
-                jsr330
-                </div>
-                    <div class="clear">
-        <hr/>
-      </div>
-    </div>
-    <div id="breadcrumbs">
-            
+  <body>
         
-                <div class="xleft">
-        <span id="publishDate">Last Published: 2012-06-16</span>
-                  &nbsp;| <span id="projectVersion">Version: 1.0.0-SNAPSHOT</span>
-                      </div>
-            <div class="xright">                    <a href="./" title="jsr330">jsr330</a>
-              
-        
+    
+        <div class="container-fluid">
+                <div id="banner">
+        <div class="pull-left">                                <a href="./" id="bannerLeft">
+                <h2>jsr330</h2>
+                </a>
       </div>
-      <div class="clear">
-        <hr/>
+        <div class="pull-right">  </div>
+        <div class="clear"><hr/></div>
       </div>
-    </div>
-    <div id="leftColumn">
-      <div id="navcolumn">
-             
+      
+      <div id="breadcrumbs">
+        <ul class="breadcrumb">
+                
         
-                                          <h5>Project Documentation</h5>
+                  <li id="publishDate">Last Published: 2012-06-16</li>
+                  <li class="divider">|</li> <li id="projectVersion">Version: 1.0.0-SNAPSHOT</li>
+                                      
+        
+              </ul>
+      </div>
+
+            <div id="leftColumn" class="sidebar">
+        <div class="well">
+                
+        
+                                   <h5>Project Documentation</h5>
                   <ul>
                                                                                                                                                                                                                                                                           <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
@@ -71,24 +73,30 @@
               </ul>
         </li>
           </ul>
-                             <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+                      
+        
+      
+          
+          <div id="poweredBy">
+                            <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
         <img class="poweredBy" alt="Built by Maven" src="./images/logos/maven-feather.png" />
       </a>
-                   
-        
-            </div>
-    </div>
-    <div id="bodyColumn">
-      <div id="contentBox">
-        <div class="section"><h2>RAT (Release Audit Tool) results<a name="RAT_Release_Audit_Tool_results"></a></h2><p>The following document contains the results of <a class="externalLink" href="http://incubator.apache.org/rat/apache-rat-plugin">RAT (Release Audit Tool)</a>.</p><p></p><div class="source"><pre>
+                </div>
+        </div>
+      </div>
+      
+      <div id="bodyColumn" class="content">
+        <div id="contentBox">
+                              
+          <div class="section"><h2>RAT (Release Audit Tool) results<a name="RAT_Release_Audit_Tool_results"></a></h2><p>The following document contains the results of <a class="externalLink" href="http://incubator.apache.org/rat/apache-rat-plugin">RAT (Release Audit Tool)</a>.</p><p></p><div class="source"><pre class="prettyprint">
 *****************************************************
 Summary
 -------
-Generated at: 2012-06-16T20:15:22+02:00
+Generated at: 2012-06-16T21:05:57+02:00
 Notes: 1
-Binaries: 103
+Binaries: 110
 Archives: 0
-Standards: 97
+Standards: 98
 
 Apache Licensed: 21
 Generated Documents: 0
@@ -96,7 +104,7 @@ Generated Documents: 0
 JavaDocs are generated and so license header is optional
 Generated files do not required license headers
 
-76 Unknown Licenses
+77 Unknown Licenses
 
 *******************************
 
@@ -176,6 +184,7 @@ Unapproved licenses:
   .git/refs/remotes/origin/master
   .git/refs/tags/v1.0.0
   .gitignore
+  src/site/site.xml
   src/test/resources/log4j.xml
   src/test/resources/logging.properties
 
@@ -220,11 +229,13 @@ Archives:
   B     .git/objects/0c/0fedc0f8100f70ab10a5477ad9a23078f1d6ba
   B     .git/objects/0d/e6b54cb465fd52deb37d1d7778737622eee82e
  !????? .git/objects/0f/37cd9a0545ff21e7d77559ec55ec2e429df363
+  B     .git/objects/0f/8c3549e7cedc32fed04c2ec45b1a273e897a38
   B     .git/objects/12/667b561788c4ca82dc46f4eecd683ba60c21fb
  !????? .git/objects/12/773b4f1c635b26c495de25e20a1da0778b6855
   B     .git/objects/15/71c80337e7ae522ef6044f51ebe93ad9404082
   B     .git/objects/17/5382bb1187b8cbe1a2fcb1404bf5566caf4783
   B     .git/objects/17/c48ff895ad47e3a6cabb1b38a338121f9e1f34
+  B     .git/objects/17/e37b54d4e52a1a0e659185fd54938a179dfa89
   B     .git/objects/1a/abd96c3beb90fd9a876e71724f50afc1cf573e
   B     .git/objects/1c/0c277aba7b141c48236cb16e91763434feb94a
   B     .git/objects/1d/f87bd8876410519abbdf65f2d1415854643849
@@ -253,6 +264,7 @@ Archives:
  !????? .git/objects/4d/735600560faf0af9e42cff512bc0f3dcb82b22
  !????? .git/objects/4f/89021e1e70b0c6165f6ff8f13200d3d50c49cc
   B     .git/objects/4f/dcaf1916fe1c0a710170e3d42628ffa91bffa2
+  B     .git/objects/51/8cf0a776432cda81b14e6e1d2168db5a3aa686
   B     .git/objects/51/afaca6cc6b42be5124f0c99079efa6935ffc67
   B     .git/objects/52/50bc59968b5934a6b971ea993a95f414aecff5
   B     .git/objects/54/19b99a8902a354bb82c8ffa5ca7c23d647478e
@@ -278,6 +290,7 @@ Archives:
  !????? .git/objects/77/d9d286311d3ea3fd4a5e9f51e99e4384c96cf7
  !????? .git/objects/77/fb52b52456719d6a47f4eb44a6175002cf2e87
   B     .git/objects/78/d9a948611895d71c2842e43fa955357abda8ef
+  B     .git/objects/79/e61d8774c691e2367d3f273b256a70d54eef76
   B     .git/objects/7b/45448b0e5f97691f190747ecdf7c7e1f6673db
   B     .git/objects/7f/7e80994e09b2ba99aa2d73e526f7bda46dfb6f
  !????? .git/objects/7f/965d971f0cec75288726c4016a1bc5372cbc05
@@ -306,8 +319,10 @@ Archives:
   B     .git/objects/aa/16c9bd17bb939154cba93e264190bc9da0a5ab
   B     .git/objects/aa/e73e9ef3791d6bcfd06dfea692d36d91f4d25d
   B     .git/objects/ab/471e245658fba35d59a587d12a8aac8999cdb5
+  B     .git/objects/ab/fe17f6b202a270fcd77ea63c41ee527c749564
  !????? .git/objects/ad/ea8a207e810ef0afc40b44e74648f9ff56bfe4
   B     .git/objects/ae/41c0fb5a3bb16ef9cd4f02ee84b2a674c6bdcb
+  B     .git/objects/af/195980877a66c4e15748c3407ab6c7437e7a1d
   B     .git/objects/b6/16bde81bd9b76676266d5df346a5b4ac0511cb
  !????? .git/objects/b8/86b5beb204dde35c2563eafaf4cf1de1261ea2
  !????? .git/objects/ba/e621236f9ef7adb960d1e215b5fd77c68ee19c
@@ -355,6 +370,7 @@ Archives:
   B     .git/objects/fc/c4b7ac24c489f44fa40e20116ca14997663eb2
   B     .git/objects/fd/34d8af64181287702986e1ce5997eb595e4c21
  !????? .git/objects/fd/a65321a347198e036fd1516c08f63aea9a6bcc
+  B     .git/objects/fd/e90104fd44ebc7a450b518a75c3929aebc3d4e
  !????? .git/objects/ff/6fb073861c0b3f4b74af2f5f5a56b8b32fea72
  !????? .git/objects/ff/ab0d3bc0f91eaf64f8db77732d4292813c51a7
  !????? .git/refs/heads/develop
@@ -385,6 +401,7 @@ Archives:
   AL    src/main/java/com/github/jsr330/scanning/DefaultClassScanner.java
   AL    src/main/java/com/github/jsr330/scanning/RegExClassnameFilter.java
   AL    src/main/java/com/github/jsr330/scanning/RegExSourceDirFilter.java
+ !????? src/site/site.xml
   AL    src/test/java/com/github/jsr330/MyTck.java
   AL    src/test/resources/log4j.dtd
  !????? src/test/resources/log4j.xml
@@ -735,6 +752,8 @@ f07878976388340497a9aeb462ec64bc6f13c83c d97eb20afd64c847e8a51f73fd1dbe042e08309
 d97eb20afd64c847e8a51f73fd1dbe042e08309d 30a46c7ee309c0d861c0c2fb1881dc08a0183390 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339865240 +0200	commit: changed version, added tag
 30a46c7ee309c0d861c0c2fb1881dc08a0183390 dbfa09c6b6a5cb0018d1a2459f29bd1799e45d7d rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339869297 +0200	commit: doc
 dbfa09c6b6a5cb0018d1a2459f29bd1799e45d7d 4fdcaf1916fe1c0a710170e3d42628ffa91bffa2 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339869415 +0200	commit: doc
+4fdcaf1916fe1c0a710170e3d42628ffa91bffa2 518cf0a776432cda81b14e6e1d2168db5a3aa686 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339870783 +0200	commit: doc + pom
+518cf0a776432cda81b14e6e1d2168db5a3aa686 fde90104fd44ebc7a450b518a75c3929aebc3d4e rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339871111 +0200	commit: doc
 
  =======================================================================
  ==.git/logs/refs/heads/develop
@@ -748,6 +767,8 @@ f07878976388340497a9aeb462ec64bc6f13c83c d97eb20afd64c847e8a51f73fd1dbe042e08309
 d97eb20afd64c847e8a51f73fd1dbe042e08309d 30a46c7ee309c0d861c0c2fb1881dc08a0183390 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339865240 +0200	commit: changed version, added tag
 30a46c7ee309c0d861c0c2fb1881dc08a0183390 dbfa09c6b6a5cb0018d1a2459f29bd1799e45d7d rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339869297 +0200	commit: doc
 dbfa09c6b6a5cb0018d1a2459f29bd1799e45d7d 4fdcaf1916fe1c0a710170e3d42628ffa91bffa2 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339869415 +0200	commit: doc
+4fdcaf1916fe1c0a710170e3d42628ffa91bffa2 518cf0a776432cda81b14e6e1d2168db5a3aa686 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339870783 +0200	commit: doc + pom
+518cf0a776432cda81b14e6e1d2168db5a3aa686 fde90104fd44ebc7a450b518a75c3929aebc3d4e rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339871111 +0200	commit: doc
 
  =======================================================================
  ==.git/logs/refs/heads/master
@@ -763,6 +784,8 @@ dbfa09c6b6a5cb0018d1a2459f29bd1799e45d7d 4fdcaf1916fe1c0a710170e3d42628ffa91bffa
 d97eb20afd64c847e8a51f73fd1dbe042e08309d 30a46c7ee309c0d861c0c2fb1881dc08a0183390 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339865260 +0200	update by push
 30a46c7ee309c0d861c0c2fb1881dc08a0183390 dbfa09c6b6a5cb0018d1a2459f29bd1799e45d7d rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339869306 +0200	update by push
 dbfa09c6b6a5cb0018d1a2459f29bd1799e45d7d 4fdcaf1916fe1c0a710170e3d42628ffa91bffa2 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339869428 +0200	update by push
+4fdcaf1916fe1c0a710170e3d42628ffa91bffa2 518cf0a776432cda81b14e6e1d2168db5a3aa686 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339870793 +0200	update by push
+518cf0a776432cda81b14e6e1d2168db5a3aa686 fde90104fd44ebc7a450b518a75c3929aebc3d4e rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339871121 +0200	update by push
 
  =======================================================================
  ==.git/logs/refs/remotes/github/master
@@ -780,6 +803,8 @@ f07878976388340497a9aeb462ec64bc6f13c83c d97eb20afd64c847e8a51f73fd1dbe042e08309
 d97eb20afd64c847e8a51f73fd1dbe042e08309d 30a46c7ee309c0d861c0c2fb1881dc08a0183390 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339865241 +0200	update by push
 30a46c7ee309c0d861c0c2fb1881dc08a0183390 dbfa09c6b6a5cb0018d1a2459f29bd1799e45d7d rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339869298 +0200	update by push
 dbfa09c6b6a5cb0018d1a2459f29bd1799e45d7d 4fdcaf1916fe1c0a710170e3d42628ffa91bffa2 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339869416 +0200	update by push
+4fdcaf1916fe1c0a710170e3d42628ffa91bffa2 518cf0a776432cda81b14e6e1d2168db5a3aa686 rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339870784 +0200	update by push
+518cf0a776432cda81b14e6e1d2168db5a3aa686 fde90104fd44ebc7a450b518a75c3929aebc3d4e rstiller &lt;robert.stiller.mail@googlemail.com&gt; 1339871112 +0200	update by push
 
  =======================================================================
  ==.git/logs/refs/remotes/origin/master
@@ -1078,7 +1103,7 @@ zc.&#x203a;?&#xe6;&#x2026;&#xf9;&#xed;n&#x178;j&#xed;p&gt;&#xbc;?p??&#xd4;&#xf6;
  =======================================================================
  ==.git/refs/heads/develop
  =======================================================================
-4fdcaf1916fe1c0a710170e3d42628ffa91bffa2
+fde90104fd44ebc7a450b518a75c3929aebc3d4e
 
  =======================================================================
  ==.git/refs/heads/master
@@ -1088,7 +1113,7 @@ zc.&#x203a;?&#xe6;&#x2026;&#xf9;&#xed;n&#x178;j&#xed;p&gt;&#xbc;?p??&#xd4;&#xf6;
  =======================================================================
  ==.git/refs/remotes/github/develop
  =======================================================================
-4fdcaf1916fe1c0a710170e3d42628ffa91bffa2
+fde90104fd44ebc7a450b518a75c3929aebc3d4e
 
  =======================================================================
  ==.git/refs/remotes/github/master
@@ -1098,7 +1123,7 @@ zc.&#x203a;?&#xe6;&#x2026;&#xf9;&#xed;n&#x178;j&#xed;p&gt;&#xbc;?p??&#xd4;&#xf6;
  =======================================================================
  ==.git/refs/remotes/origin/develop
  =======================================================================
-4fdcaf1916fe1c0a710170e3d42628ffa91bffa2
+fde90104fd44ebc7a450b518a75c3929aebc3d4e
 
  =======================================================================
  ==.git/refs/remotes/origin/master
@@ -1118,6 +1143,33 @@ d97eb20afd64c847e8a51f73fd1dbe042e08309d
 /.classpath
 /.project
 /*.log
+
+ =======================================================================
+ ==src/site/site.xml
+ =======================================================================
+&lt;project xmlns=&quot;http://maven.apache.org/DECORATION/1.1.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/DECORATION/1.1.0 http://maven.apache.org/xsd/decoration-1.1.0.xsd&quot;
+         name=&quot;${project.name}&quot;&gt;
+    &lt;bannerLeft&gt;
+        &lt;name&gt;${project.name}&lt;/name&gt;
+        &lt;href&gt;${project.url}&lt;/href&gt;
+    &lt;/bannerLeft&gt;
+    &lt;body&gt;
+        &lt;links&gt;
+            &lt;item name=&quot;Apache&quot; href=&quot;http://www.apache.org/&quot;/&gt;
+            &lt;item name=&quot;Maven 1.x&quot; href=&quot;http://maven.apache.org/maven-1.x/&quot;/&gt;
+            &lt;item name=&quot;Maven 2&quot; href=&quot;http://maven.apache.org/&quot;/&gt;
+            &lt;item name=&quot;${project.name}&quot; href=&quot;${project.url}&quot;/&gt;
+        &lt;/links&gt;
+        &lt;menu ref=&quot;reports&quot;/&gt;
+    &lt;/body&gt;
+    &lt;skin&gt;
+        &lt;groupId&gt;org.apache.maven.skins&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-fluido-skin&lt;/artifactId&gt;
+        &lt;version&gt;1.0&lt;/version&gt;
+    &lt;/skin&gt;
+&lt;/project&gt;
 
  =======================================================================
  ==src/test/resources/log4j.xml
@@ -1159,20 +1211,18 @@ handlers=java.util.logging.ConsoleHandler
 java.util.logging.ConsoleHandler.level=ALL
 java.util.logging.ConsoleHandler.formatter=java.util.logging.SimpleFormatter
 </pre></div></div>
+                  </div>
       </div>
     </div>
-    <div class="clear">
-      <hr/>
-    </div>
-    <div id="footer">
-      <div class="xright">
-              Copyright &#169;                   2012.
+
+    <footer class="footer">
+            <div class="container-fluid">
+              <div class="row span16">Copyright &copy;                   2012.
           All Rights Reserved.      
         
-                  </div>
-      <div class="clear">
-        <hr/>
       </div>
-    </div>
+
+                      </div>
+    </footer>
   </body>
 </html>
