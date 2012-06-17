@@ -88,7 +88,7 @@ class TypeContainer {
             methods.clear();
             for (Method method : set.type.getDeclaredMethods()) {
                 candidate = method.isAnnotationPresent(Inject.class) && !Modifier.isAbstract(method.getModifiers());
-                pckName = method.getDeclaringClass().getPackage().getName() + ' ';
+                pckName = getPackageName(method) + ' ';
                 
                 tmp.delete(0, tmp.length());
                 tmp.append(method.getReturnType()).append(' ').append(method.getName()).append(' ').append(Arrays.toString(method.getParameterTypes()));
@@ -136,6 +136,17 @@ class TypeContainer {
             
             set.methods = methods.toArray(EMPTY_METHOD_ARRAY);
             set.staticMethods = staticMethods.toArray(EMPTY_METHOD_ARRAY);
+        }
+    }
+    
+    protected String getPackageName(Method method) {
+        String name;
+        int index = (name = method.getDeclaringClass().getName()).lastIndexOf('.');
+        
+        if (index == -1) {
+            return "";
+        } else {
+            return name.substring(0, index);
         }
     }
     
