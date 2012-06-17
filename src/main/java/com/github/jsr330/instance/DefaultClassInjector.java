@@ -97,15 +97,17 @@ public class DefaultClassInjector implements ClassInjector {
                     typeContainer = generateTypeContainer(type, inheritanceTree, classLoader);
                 }
                 
-                try {
-                    inst = (T) typeContainer.constructor.newInstance(getArguments(typeContainer.constructor, inheritanceTree, classLoader));
-                    injectTypeContainer(typeContainer, inst, inheritanceTree, classLoader);
-                    
-                    if (type.isAnnotationPresent(Singleton.class) && !singletons.containsKey(type.getName())) {
-                        singletons.put(type.getName(), inst);
+                if (typeContainer != null && typeContainer.constructor != null) {
+                    try {
+                        inst = (T) typeContainer.constructor.newInstance(getArguments(typeContainer.constructor, inheritanceTree, classLoader));
+                        injectTypeContainer(typeContainer, inst, inheritanceTree, classLoader);
+                        
+                        if (type.isAnnotationPresent(Singleton.class) && !singletons.containsKey(type.getName())) {
+                            singletons.put(type.getName(), inst);
+                        }
+                    } catch (Exception exception) {
+                        LOGGER.debug("error while instancing type", exception);
                     }
-                } catch (Exception exception) {
-                    LOGGER.debug("error while instancing type", exception);
                 }
             }
         }
@@ -294,6 +296,14 @@ public class DefaultClassInjector implements ClassInjector {
         }
         
         return list.toArray(new Class<?>[] {});
+    }
+    
+    public TypeDeterminator getTypeDeterminator() {
+        return typeDeterminator;
+    }
+    
+    public void setTypeDeterminator(TypeDeterminator typeDeterminator) {
+        this.typeDeterminator = typeDeterminator;
     }
     
 }

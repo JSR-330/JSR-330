@@ -56,10 +56,6 @@ public class Injector {
     }
     
     public <T> T getInstance(Class<T> type) {
-        if (!inheritance.containsKey(type.getName())) {
-            throw new RuntimeException("unknown type: " + type.getName());
-        }
-        
         return instancer.instance(type, inheritance, classLoader, null, null);
     }
     
