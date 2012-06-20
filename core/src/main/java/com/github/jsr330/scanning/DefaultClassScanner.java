@@ -41,6 +41,8 @@ public class DefaultClassScanner implements ClassScanner {
     protected ClassScanner parent;
     protected GenericFilter<URI> sourceDirFilter;
     protected GenericFilter<String> classNameFilter;
+    protected Map<String, Class<?>> classes;
+    protected Object monitor = new Object();
     
     public DefaultClassScanner() {
         this(null, null, null);
@@ -65,45 +67,50 @@ public class DefaultClassScanner implements ClassScanner {
         Enumeration<URL> urls;
         URL url;
         String tmp;
-        Map<String, Class<?>> classes = new TreeMap<String, Class<?>>();
         Map<String, Class<?>> parentClasses;
         File file;
         URI uri;
         
-        if (parent != null) {
-            if ((parentClasses = parent.scan(loader)) != null) {
-                classes.putAll(parentClasses);
-            }
-        }
-        
-        try {
-            urls = loader.getResources("META-INF");
-            while (urls.hasMoreElements()) {
-                url = urls.nextElement();
-                tmp = url.toExternalForm();
-                tmp = tmp.substring(0, tmp.length() - 8);
-                LOGGER.debug("listClasses - source={}", tmp);
+        synchronized (monitor) {
+            if (classes == null) {
+                classes = new TreeMap<String, Class<?>>();
+                
+                if (parent != null) {
+                    if ((parentClasses = parent.scan(loader)) != null) {
+                        classes.putAll(parentClasses);
+                    }
+                }
                 
                 try {
-                    if (tmp.startsWith("file:")) {
-                        uri = new URI(tmp);
-                        if (sourceDirFilter == null || sourceDirFilter != null && sourceDirFilter.filter(uri)) {
-                            file = new File(uri);
-                            traverseFile(file.getAbsolutePath(), file, loader, classes);
-                        }
-                    } else if (tmp.startsWith("jar:")) {
-                        uri = new URI(tmp.substring(4, tmp.length() - 2));
-                        if (sourceDirFilter == null || sourceDirFilter != null && sourceDirFilter.filter(uri)) {
-                            file = new File(uri);
-                            traverseJar(file.getAbsolutePath(), file.toURI().toURL(), loader, classes);
+                    urls = loader.getResources("META-INF");
+                    while (urls.hasMoreElements()) {
+                        url = urls.nextElement();
+                        tmp = url.toExternalForm();
+                        tmp = tmp.substring(0, tmp.length() - 8);
+                        LOGGER.debug("listClasses - source={}", tmp);
+                        
+                        try {
+                            if (tmp.startsWith("file:")) {
+                                uri = new URI(tmp);
+                                if (sourceDirFilter == null || sourceDirFilter != null && sourceDirFilter.filter(uri)) {
+                                    file = new File(uri);
+                                    traverseFile(file.getAbsolutePath(), file, loader, classes);
+                                }
+                            } else if (tmp.startsWith("jar:")) {
+                                uri = new URI(tmp.substring(4, tmp.length() - 2));
+                                if (sourceDirFilter == null || sourceDirFilter != null && sourceDirFilter.filter(uri)) {
+                                    file = new File(uri);
+                                    traverseJar(file.getAbsolutePath(), file.toURI().toURL(), loader, classes);
+                                }
+                            }
+                        } catch (URISyntaxException exception) {
+                            LOGGER.debug("error while generating URI", exception);
                         }
                     }
-                } catch (URISyntaxException exception) {
-                    LOGGER.debug("error while generating URI", exception);
+                } catch (IOException exception) {
+                    LOGGER.debug("error while traversing jar", exception);
                 }
             }
-        } catch (IOException exception) {
-            LOGGER.debug("error while traversing jar", exception);
         }
         
         return classes;

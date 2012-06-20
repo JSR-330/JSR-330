@@ -6,10 +6,9 @@
         <name>${project.name}</name>
         <href>${project.url}</href>
     </bannerLeft>
-    <bannerRight>
-    	<src>http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png</src>
-        <href>https://buildhive.cloudbees.com/</href>
-    </bannerRight>
+    <poweredBy>
+        <logo href="https://buildhive.cloudbees.com/" img="http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png"/>
+    </poweredBy>
     <body>
         <links>
             <item name="Apache" href="http://www.apache.org/"/>
@@ -17,6 +16,8 @@
             <item name="Maven 2" href="http://maven.apache.org/"/>
             <item name="${project.name}" href="${project.url}"/>
         </links>
+        <menu ref="parent"/>
+        <menu ref="modules"/>
         <menu ref="reports"/>
     </body>
     <skin>
