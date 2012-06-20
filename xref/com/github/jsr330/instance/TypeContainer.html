@@ -98,7 +98,7 @@
 <a class="jxr_linenumber" name="88" href="#88">88</a>              methods.clear();
 <a class="jxr_linenumber" name="89" href="#89">89</a>              <strong class="jxr_keyword">for</strong> (Method method : set.type.getDeclaredMethods()) {
 <a class="jxr_linenumber" name="90" href="#90">90</a>                  candidate = method.isAnnotationPresent(Inject.<strong class="jxr_keyword">class</strong>) &amp;&amp; !Modifier.isAbstract(method.getModifiers());
-<a class="jxr_linenumber" name="91" href="#91">91</a>                  pckName = method.getDeclaringClass().getPackage().getName() + ' ';
+<a class="jxr_linenumber" name="91" href="#91">91</a>                  pckName = getPackageName(method) + ' ';
 <a class="jxr_linenumber" name="92" href="#92">92</a>                  
 <a class="jxr_linenumber" name="93" href="#93">93</a>                  tmp.delete(0, tmp.length());
 <a class="jxr_linenumber" name="94" href="#94">94</a>                  tmp.append(method.getReturnType()).append(' ').append(method.getName()).append(' ').append(Arrays.toString(method.getParameterTypes()));
@@ -149,55 +149,66 @@
 <a class="jxr_linenumber" name="139" href="#139">139</a>         }
 <a class="jxr_linenumber" name="140" href="#140">140</a>     }
 <a class="jxr_linenumber" name="141" href="#141">141</a>     
-<a class="jxr_linenumber" name="142" href="#142">142</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> isSamePackage(Method oldMethod, Method method) {
-<a class="jxr_linenumber" name="143" href="#143">143</a>         <strong class="jxr_keyword">return</strong> oldMethod.getDeclaringClass().getPackage().equals(method.getDeclaringClass().getPackage());
-<a class="jxr_linenumber" name="144" href="#144">144</a>     }
-<a class="jxr_linenumber" name="145" href="#145">145</a>     
-<a class="jxr_linenumber" name="146" href="#146">146</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> getFieldInformation() {
-<a class="jxr_linenumber" name="147" href="#147">147</a>         Field[] fields;
-<a class="jxr_linenumber" name="148" href="#148">148</a>         List&lt;Field&gt; objectFields = <strong class="jxr_keyword">new</strong> ArrayList&lt;Field&gt;();
-<a class="jxr_linenumber" name="149" href="#149">149</a>         List&lt;Field&gt; staticFields = <strong class="jxr_keyword">new</strong> ArrayList&lt;Field&gt;();
-<a class="jxr_linenumber" name="150" href="#150">150</a>         
-<a class="jxr_linenumber" name="151" href="#151">151</a>         <strong class="jxr_keyword">for</strong> (InjectionSet set : injectionSets) {
-<a class="jxr_linenumber" name="152" href="#152">152</a>             objectFields.clear();
-<a class="jxr_linenumber" name="153" href="#153">153</a>             staticFields.clear();
-<a class="jxr_linenumber" name="154" href="#154">154</a>             fields = set.type.getDeclaredFields();
-<a class="jxr_linenumber" name="155" href="#155">155</a>             <strong class="jxr_keyword">if</strong> (fields != <strong class="jxr_keyword">null</strong> &amp;&amp; fields.length &gt; 0) {
-<a class="jxr_linenumber" name="156" href="#156">156</a>                 <strong class="jxr_keyword">for</strong> (Field field : fields) {
-<a class="jxr_linenumber" name="157" href="#157">157</a>                     <strong class="jxr_keyword">if</strong> (field.isAnnotationPresent(Inject.<strong class="jxr_keyword">class</strong>) &amp;&amp; !Modifier.isFinal(field.getModifiers())) {
-<a class="jxr_linenumber" name="158" href="#158">158</a>                         <strong class="jxr_keyword">if</strong> (!field.isAccessible()) {
-<a class="jxr_linenumber" name="159" href="#159">159</a>                             field.setAccessible(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="160" href="#160">160</a>                         }
-<a class="jxr_linenumber" name="161" href="#161">161</a>                         
-<a class="jxr_linenumber" name="162" href="#162">162</a>                         <strong class="jxr_keyword">if</strong> (Modifier.isStatic(field.getModifiers())) {
-<a class="jxr_linenumber" name="163" href="#163">163</a>                             staticFields.add(field);
-<a class="jxr_linenumber" name="164" href="#164">164</a>                         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="165" href="#165">165</a>                             objectFields.add(field);
-<a class="jxr_linenumber" name="166" href="#166">166</a>                         }
-<a class="jxr_linenumber" name="167" href="#167">167</a>                     }
-<a class="jxr_linenumber" name="168" href="#168">168</a>                 }
-<a class="jxr_linenumber" name="169" href="#169">169</a>             }
-<a class="jxr_linenumber" name="170" href="#170">170</a>             
-<a class="jxr_linenumber" name="171" href="#171">171</a>             set.fields = objectFields.toArray(EMPTY_FIELD_ARRAY);
-<a class="jxr_linenumber" name="172" href="#172">172</a>             set.staticFields = staticFields.toArray(EMPTY_FIELD_ARRAY);
-<a class="jxr_linenumber" name="173" href="#173">173</a>         }
-<a class="jxr_linenumber" name="174" href="#174">174</a>     }
-<a class="jxr_linenumber" name="175" href="#175">175</a>     
-<a class="jxr_linenumber" name="176" href="#176">176</a>     @Override
-<a class="jxr_linenumber" name="177" href="#177">177</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="178" href="#178">178</a>         StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="179" href="#179">179</a>         builder.append(getClass().getName());
-<a class="jxr_linenumber" name="180" href="#180">180</a>         builder.append(<span class="jxr_string">" [injectionSets="</span>);
-<a class="jxr_linenumber" name="181" href="#181">181</a>         builder.append(Arrays.toString(injectionSets));
-<a class="jxr_linenumber" name="182" href="#182">182</a>         builder.append(<span class="jxr_string">",\ntype="</span>);
-<a class="jxr_linenumber" name="183" href="#183">183</a>         builder.append(type);
-<a class="jxr_linenumber" name="184" href="#184">184</a>         builder.append(<span class="jxr_string">",\nconstructor="</span>);
-<a class="jxr_linenumber" name="185" href="#185">185</a>         builder.append(constructor);
-<a class="jxr_linenumber" name="186" href="#186">186</a>         builder.append(<span class="jxr_string">"]"</span>);
-<a class="jxr_linenumber" name="187" href="#187">187</a>         <strong class="jxr_keyword">return</strong> builder.toString();
-<a class="jxr_linenumber" name="188" href="#188">188</a>     }
-<a class="jxr_linenumber" name="189" href="#189">189</a>     
-<a class="jxr_linenumber" name="190" href="#190">190</a> }
+<a class="jxr_linenumber" name="142" href="#142">142</a>     <strong class="jxr_keyword">protected</strong> String getPackageName(Method method) {
+<a class="jxr_linenumber" name="143" href="#143">143</a>         String name;
+<a class="jxr_linenumber" name="144" href="#144">144</a>         <strong class="jxr_keyword">int</strong> index = (name = method.getDeclaringClass().getName()).lastIndexOf('.');
+<a class="jxr_linenumber" name="145" href="#145">145</a>         
+<a class="jxr_linenumber" name="146" href="#146">146</a>         <strong class="jxr_keyword">if</strong> (index == -1) {
+<a class="jxr_linenumber" name="147" href="#147">147</a>             <strong class="jxr_keyword">return</strong> <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="148" href="#148">148</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="149" href="#149">149</a>             <strong class="jxr_keyword">return</strong> name.substring(0, index);
+<a class="jxr_linenumber" name="150" href="#150">150</a>         }
+<a class="jxr_linenumber" name="151" href="#151">151</a>     }
+<a class="jxr_linenumber" name="152" href="#152">152</a>     
+<a class="jxr_linenumber" name="153" href="#153">153</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> isSamePackage(Method oldMethod, Method method) {
+<a class="jxr_linenumber" name="154" href="#154">154</a>         <strong class="jxr_keyword">return</strong> oldMethod.getDeclaringClass().getPackage().equals(method.getDeclaringClass().getPackage());
+<a class="jxr_linenumber" name="155" href="#155">155</a>     }
+<a class="jxr_linenumber" name="156" href="#156">156</a>     
+<a class="jxr_linenumber" name="157" href="#157">157</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> getFieldInformation() {
+<a class="jxr_linenumber" name="158" href="#158">158</a>         Field[] fields;
+<a class="jxr_linenumber" name="159" href="#159">159</a>         List&lt;Field&gt; objectFields = <strong class="jxr_keyword">new</strong> ArrayList&lt;Field&gt;();
+<a class="jxr_linenumber" name="160" href="#160">160</a>         List&lt;Field&gt; staticFields = <strong class="jxr_keyword">new</strong> ArrayList&lt;Field&gt;();
+<a class="jxr_linenumber" name="161" href="#161">161</a>         
+<a class="jxr_linenumber" name="162" href="#162">162</a>         <strong class="jxr_keyword">for</strong> (InjectionSet set : injectionSets) {
+<a class="jxr_linenumber" name="163" href="#163">163</a>             objectFields.clear();
+<a class="jxr_linenumber" name="164" href="#164">164</a>             staticFields.clear();
+<a class="jxr_linenumber" name="165" href="#165">165</a>             fields = set.type.getDeclaredFields();
+<a class="jxr_linenumber" name="166" href="#166">166</a>             <strong class="jxr_keyword">if</strong> (fields != <strong class="jxr_keyword">null</strong> &amp;&amp; fields.length &gt; 0) {
+<a class="jxr_linenumber" name="167" href="#167">167</a>                 <strong class="jxr_keyword">for</strong> (Field field : fields) {
+<a class="jxr_linenumber" name="168" href="#168">168</a>                     <strong class="jxr_keyword">if</strong> (field.isAnnotationPresent(Inject.<strong class="jxr_keyword">class</strong>) &amp;&amp; !Modifier.isFinal(field.getModifiers())) {
+<a class="jxr_linenumber" name="169" href="#169">169</a>                         <strong class="jxr_keyword">if</strong> (!field.isAccessible()) {
+<a class="jxr_linenumber" name="170" href="#170">170</a>                             field.setAccessible(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="171" href="#171">171</a>                         }
+<a class="jxr_linenumber" name="172" href="#172">172</a>                         
+<a class="jxr_linenumber" name="173" href="#173">173</a>                         <strong class="jxr_keyword">if</strong> (Modifier.isStatic(field.getModifiers())) {
+<a class="jxr_linenumber" name="174" href="#174">174</a>                             staticFields.add(field);
+<a class="jxr_linenumber" name="175" href="#175">175</a>                         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="176" href="#176">176</a>                             objectFields.add(field);
+<a class="jxr_linenumber" name="177" href="#177">177</a>                         }
+<a class="jxr_linenumber" name="178" href="#178">178</a>                     }
+<a class="jxr_linenumber" name="179" href="#179">179</a>                 }
+<a class="jxr_linenumber" name="180" href="#180">180</a>             }
+<a class="jxr_linenumber" name="181" href="#181">181</a>             
+<a class="jxr_linenumber" name="182" href="#182">182</a>             set.fields = objectFields.toArray(EMPTY_FIELD_ARRAY);
+<a class="jxr_linenumber" name="183" href="#183">183</a>             set.staticFields = staticFields.toArray(EMPTY_FIELD_ARRAY);
+<a class="jxr_linenumber" name="184" href="#184">184</a>         }
+<a class="jxr_linenumber" name="185" href="#185">185</a>     }
+<a class="jxr_linenumber" name="186" href="#186">186</a>     
+<a class="jxr_linenumber" name="187" href="#187">187</a>     @Override
+<a class="jxr_linenumber" name="188" href="#188">188</a>     <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="189" href="#189">189</a>         StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="190" href="#190">190</a>         builder.append(getClass().getName());
+<a class="jxr_linenumber" name="191" href="#191">191</a>         builder.append(<span class="jxr_string">" [injectionSets="</span>);
+<a class="jxr_linenumber" name="192" href="#192">192</a>         builder.append(Arrays.toString(injectionSets));
+<a class="jxr_linenumber" name="193" href="#193">193</a>         builder.append(<span class="jxr_string">",\ntype="</span>);
+<a class="jxr_linenumber" name="194" href="#194">194</a>         builder.append(type);
+<a class="jxr_linenumber" name="195" href="#195">195</a>         builder.append(<span class="jxr_string">",\nconstructor="</span>);
+<a class="jxr_linenumber" name="196" href="#196">196</a>         builder.append(constructor);
+<a class="jxr_linenumber" name="197" href="#197">197</a>         builder.append(<span class="jxr_string">"]"</span>);
+<a class="jxr_linenumber" name="198" href="#198">198</a>         <strong class="jxr_keyword">return</strong> builder.toString();
+<a class="jxr_linenumber" name="199" href="#199">199</a>     }
+<a class="jxr_linenumber" name="200" href="#200">200</a>     
+<a class="jxr_linenumber" name="201" href="#201">201</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
