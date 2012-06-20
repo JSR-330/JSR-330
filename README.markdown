@@ -1,5 +1,5 @@
 # JSR-330 - Dependency Injection for Java
-(http://jsr-330.github.com/JSR-330/)
+http://jsr-330.github.com/JSR-330/
 
 This is a simple and easy to integrate implementation of JSR-330 (http://jcp.org/en/jsr/detail?id=330).
 One can instance an ``Injector`` and instantly go for DI. This implementation passes the Technology Compatibility Kit (TCK).
@@ -136,5 +136,13 @@ public class MyTypeDeterminator implements TypeDeterminator {
     }
     
 }
+
+ClassAnalyser<Map<String, Class<?>[]>> analyser = new InheritanceAnalyser();
+ClassInjector instancer = new DefaultClassInjector();
+ClassScanner scanner = new DefaultClassScanner();
+
+instancer.setTypeDeterminator(new MyTypeDeterminator());
+
+Injector injector = new Injector(Thread.currentThread().getContextClassLoader(), scanner, analyser, instancer);
 
 ```
