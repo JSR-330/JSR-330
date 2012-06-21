@@ -314,14 +314,6 @@
                 <configuration>
                     <message>Creating site for ${project.version}</message>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>site-deploy</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

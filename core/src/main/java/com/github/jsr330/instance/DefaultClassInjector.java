@@ -23,6 +23,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,45 +31,75 @@ import java.util.TreeMap;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Qualifier;
-import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jsr330.spi.ClassInjector;
+import com.github.jsr330.spi.TypeConfig;
+import com.github.jsr330.spi.TypeDeterminator;
+
 public class DefaultClassInjector implements ClassInjector {
     
+    private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[] {};
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultClassInjector.class);
     
     protected Map<String, Provider<?>> providers = new TreeMap<String, Provider<?>>();
     protected Map<String, Object> singletons = new TreeMap<String, Object>();
     protected TypeDeterminator typeDeterminator = new DefaultTypeDeterminator();
     protected Map<String, TypeContainer> types = new TreeMap<String, TypeContainer>();
+    protected TypeConfig config;
     
+    public DefaultClassInjector() {
+    }
+    
+    public DefaultClassInjector(TypeConfig config) {
+        this.config = config;
+    }
+    
+    public DefaultClassInjector(TypeDeterminator typeDeterminator) {
+        this.typeDeterminator = typeDeterminator;
+    }
+    
+    public DefaultClassInjector(TypeConfig config, TypeDeterminator typeDeterminator) {
+        this.config = config;
+        this.typeDeterminator = typeDeterminator;
+    }
+    
+    @Override
+    public void setTypeConfig(TypeConfig config) {
+        this.config = config;
+    }
+    
+    @SuppressWarnings("unchecked")
     @Override
     public void injectStaticMembers(Map<String, Class<?>> classes, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader) {
         TypeContainer typeContainer;
+        Map<String, Class<? extends Object>[]> castedInheritanceTree = new HashMap<String, Class<? extends Object>[]>(inheritanceTree);
         
         for (Map.Entry<String, Class<?>> type : classes.entrySet()) {
-            typeContainer = generateTypeContainer(type.getValue(), inheritanceTree, classLoader);
+            typeContainer = generateTypeContainer((Class<Object>) type.getValue(), castedInheritanceTree, null, classLoader);
             for (InjectionSet set : typeContainer.injectionSets) {
-                injectStaticFields(set, null, inheritanceTree, classLoader);
-                injectStaticMethods(set, null, inheritanceTree, classLoader);
+                injectStaticFields(set, (Object) null, castedInheritanceTree, classLoader);
+                injectStaticMethods(set, (Object) null, castedInheritanceTree, classLoader);
             }
         }
     }
     
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T instance(Class<?> type, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader, Class<?>[] generics, Annotation qualifier) {
+    public <T> T instance(Class<T> type, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader, Class<?>[] generics, Annotation qualifier) {
         T inst = null;
-        Provider<?> provider;
-        Class<?>[] candidates;
+        Provider<T> provider;
+        Class<? extends T>[] candidates;
         TypeContainer typeContainer;
         
         LOGGER.debug("instance - gets instance for {} with generics {}", type, generics);
         
         if (type.isAssignableFrom(Provider.class)) {
-            provider = new SimpleProvider(generics[0], this, inheritanceTree, qualifier, classLoader);
+            if (config == null || (provider = config.getProvider(this, type, inheritanceTree, qualifier, classLoader)) == null) {
+                provider = new SimpleProvider<T>((Class<T>) generics[0], this, inheritanceTree, qualifier, classLoader);
+            }
             LOGGER.debug("instance - return provider {} for {}", provider, generics[0]);
             return (T) provider;
         }
@@ -85,7 +116,7 @@ public class DefaultClassInjector implements ClassInjector {
                 candidates = inheritanceTree.get(type.getName());
                 if (candidates != null && candidates.length > 0) {
                     if (candidates.length == 1) {
-                        inst = instance(candidates[0], inheritanceTree, classLoader, null, qualifier);
+                        inst = instance((Class<T>) candidates[0], inheritanceTree, classLoader, null, qualifier);
                     }
                 }
                 
@@ -94,7 +125,7 @@ public class DefaultClassInjector implements ClassInjector {
                 }
             } else {
                 if ((typeContainer = types.get(type.getName())) == null) {
-                    typeContainer = generateTypeContainer(type, inheritanceTree, classLoader);
+                    typeContainer = generateTypeContainer(type, inheritanceTree, qualifier, classLoader);
                 }
                 
                 if (typeContainer != null && typeContainer.constructor != null) {
@@ -102,7 +133,7 @@ public class DefaultClassInjector implements ClassInjector {
                         inst = (T) typeContainer.constructor.newInstance(getArguments(typeContainer.constructor, inheritanceTree, classLoader));
                         injectTypeContainer(typeContainer, inst, inheritanceTree, classLoader);
                         
-                        if (type.isAnnotationPresent(Singleton.class) && !singletons.containsKey(type.getName())) {
+                        if (typeContainer.isSingleton() && !singletons.containsKey(type.getName())) {
                             singletons.put(type.getName(), inst);
                         }
                     } catch (Exception exception) {
@@ -115,42 +146,47 @@ public class DefaultClassInjector implements ClassInjector {
         return inst;
     }
     
-    protected TypeContainer generateTypeContainer(Class<?> type, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader) {
+    protected <T> TypeContainer generateTypeContainer(Class<T> type, Map<String, Class<? extends T>[]> inheritanceTree, Annotation qualifier,
+            ClassLoader classLoader) {
         Constructor<?> ctor;
         TypeContainer typeContainer = null;
         
-        ctor = getInjectableConstructor(type);
-        if (ctor == null) {
-            ctor = getDefaultConstructor(type);
+        if (config == null || (typeContainer = config.getTypeContainer(this, type, inheritanceTree, qualifier, classLoader)) == null) {
+            ctor = getInjectableConstructor(type);
+            if (ctor == null) {
+                ctor = getDefaultConstructor(type);
+            }
+            
+            typeContainer = new TypeContainer(type, ctor);
+            typeContainer.gatherInformation();
         }
-        
-        typeContainer = new TypeContainer(type, ctor);
-        typeContainer.gatherInformation();
         types.put(type.getName(), typeContainer);
         
         return typeContainer;
     }
     
-    protected void injectTypeContainer(TypeContainer typeContainer, Object inst, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader) {
+    protected <T> void injectTypeContainer(TypeContainer typeContainer, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         for (InjectionSet set : typeContainer.injectionSets) {
             injectFields(set, inst, inheritanceTree, classLoader);
             injectMethods(set, inst, inheritanceTree, classLoader);
         }
     }
     
-    protected void injectStaticFields(InjectionSet set, Object inst, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader) {
+    protected <T> void injectStaticFields(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         injectFields(set, inst, inheritanceTree, classLoader, true);
     }
     
-    protected void injectFields(InjectionSet set, Object inst, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader) {
+    protected <T> void injectFields(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         injectFields(set, inst, inheritanceTree, classLoader, false);
     }
     
-    protected void injectFields(InjectionSet set, Object inst, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader, boolean onlyStatic) {
+    @SuppressWarnings("unchecked")
+    protected <T> void injectFields(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader,
+            boolean onlyStatic) {
         ParameterizedType parameterizedType;
-        Class<?> objectType;
+        Class<T> objectType;
         Class<?>[] generics;
-        Class<?>[] candidates;
+        Class<? extends T>[] candidates;
         Annotation qualifier;
         
         for (Field field : onlyStatic ? set.staticFields : set.fields) {
@@ -161,7 +197,7 @@ public class DefaultClassInjector implements ClassInjector {
                     generics = getGenericTypes(parameterizedType);
                     objectType = null;
                     if (parameterizedType.getRawType() instanceof Class) {
-                        objectType = (Class<?>) parameterizedType.getRawType();
+                        objectType = (Class<T>) parameterizedType.getRawType();
                     }
                     
                     if (objectType != null) {
@@ -172,7 +208,7 @@ public class DefaultClassInjector implements ClassInjector {
                     }
                 } else if (field.getGenericType() instanceof Class) {
                     qualifier = getQualifier(field.getAnnotations());
-                    field.set(inst, instance((Class<?>) field.getGenericType(), inheritanceTree, classLoader, null, qualifier));
+                    field.set(inst, instance((Class<T>) field.getGenericType(), inheritanceTree, classLoader, null, qualifier));
                 }
             } catch (Exception exception) {
                 LOGGER.debug("Error while injecting field", exception);
@@ -180,15 +216,16 @@ public class DefaultClassInjector implements ClassInjector {
         }
     }
     
-    protected void injectStaticMethods(InjectionSet set, Object inst, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader) {
+    protected <T> void injectStaticMethods(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         injectMethods(set, inst, inheritanceTree, classLoader, true);
     }
     
-    protected void injectMethods(InjectionSet set, Object inst, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader) {
+    protected <T> void injectMethods(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         injectMethods(set, inst, inheritanceTree, classLoader, false);
     }
     
-    protected void injectMethods(InjectionSet set, Object inst, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader, boolean onlyStatic) {
+    protected <T> void injectMethods(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader,
+            boolean onlyStatic) {
         Object[] arguments;
         
         for (Method method : onlyStatic ? set.staticMethods : set.methods) {
@@ -206,21 +243,22 @@ public class DefaultClassInjector implements ClassInjector {
         }
     }
     
-    protected Object[] getArguments(Method method, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader) {
+    protected <T> Object[] getArguments(Method method, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         return getArguments(inheritanceTree, method.getParameterTypes(), method.getGenericParameterTypes(), method.getParameterAnnotations(), classLoader);
     }
     
-    protected Object[] getArguments(Constructor<?> ctor, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader) {
+    protected <T> Object[] getArguments(Constructor<?> ctor, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         return getArguments(inheritanceTree, ctor.getParameterTypes(), ctor.getGenericParameterTypes(), ctor.getParameterAnnotations(), classLoader);
     }
     
-    protected Object[] getArguments(Map<String, Class<?>[]> inheritanceTree, Class<?>[] parameters, Type[] generics, Annotation[][] annotations,
+    @SuppressWarnings("unchecked")
+    protected <T> Object[] getArguments(Map<String, Class<? extends T>[]> inheritanceTree, Class<?>[] parameters, Type[] generics, Annotation[][] annotations,
             ClassLoader classLoader) {
         Object[] arguments = null;
         Class<?>[] genericTypes;
         Class<?>[] candidates;
         int index = 0;
-        Class<?> cls;
+        Class<T> cls;
         Annotation qualifier;
         
         if (parameters.length > 0) {
@@ -233,7 +271,7 @@ public class DefaultClassInjector implements ClassInjector {
                 
                 candidates = inheritanceTree.get(parameterType.getName());
                 qualifier = getQualifier(annotations[index]);
-                cls = typeDeterminator.determineClass(parameterType, candidates, qualifier, classLoader);
+                cls = typeDeterminator.determineClass((Class<T>) parameterType, (Class<? extends T>[]) candidates, qualifier, classLoader);
                 arguments[index] = instance(cls, inheritanceTree, classLoader, genericTypes, qualifier);
                 index++;
             }
@@ -295,7 +333,7 @@ public class DefaultClassInjector implements ClassInjector {
             }
         }
         
-        return list.toArray(new Class<?>[] {});
+        return list.toArray(EMPTY_CLASS_ARRAY);
     }
     
     public TypeDeterminator getTypeDeterminator() {

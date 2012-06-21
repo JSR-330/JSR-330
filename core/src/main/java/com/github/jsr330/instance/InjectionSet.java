@@ -19,13 +19,53 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-class InjectionSet {
+public class InjectionSet {
     
     protected Method[] methods;
     protected Method[] staticMethods;
     protected Field[] fields;
     protected Field[] staticFields;
     protected Class<?> type;
+    
+    public Method[] getMethods() {
+        return methods;
+    }
+    
+    public void setMethods(Method[] methods) {
+        this.methods = methods;
+    }
+    
+    public Method[] getStaticMethods() {
+        return staticMethods;
+    }
+    
+    public void setStaticMethods(Method[] staticMethods) {
+        this.staticMethods = staticMethods;
+    }
+    
+    public Field[] getFields() {
+        return fields;
+    }
+    
+    public void setFields(Field[] fields) {
+        this.fields = fields;
+    }
+    
+    public Field[] getStaticFields() {
+        return staticFields;
+    }
+    
+    public void setStaticFields(Field[] staticFields) {
+        this.staticFields = staticFields;
+    }
+    
+    public Class<?> getType() {
+        return type;
+    }
+    
+    public void setType(Class<?> type) {
+        this.type = type;
+    }
     
     @Override
     public String toString() {

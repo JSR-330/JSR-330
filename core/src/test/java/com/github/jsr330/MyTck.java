@@ -22,13 +22,13 @@ import junit.framework.Test;
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
 
-import com.github.jsr330.analysis.ClassAnalyser;
 import com.github.jsr330.analysis.InheritanceAnalyser;
-import com.github.jsr330.instance.ClassInjector;
 import com.github.jsr330.instance.DefaultClassInjector;
-import com.github.jsr330.scanning.ClassScanner;
 import com.github.jsr330.scanning.DefaultClassScanner;
 import com.github.jsr330.scanning.RegExSourceDirFilter;
+import com.github.jsr330.spi.ClassAnalyser;
+import com.github.jsr330.spi.ClassInjector;
+import com.github.jsr330.spi.ClassScanner;
 
 public class MyTck {
     

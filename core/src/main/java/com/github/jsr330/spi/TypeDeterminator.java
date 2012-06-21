@@ -13,12 +13,12 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.github.jsr330.analysis;
+package com.github.jsr330.spi;
 
-import java.util.Map;
+import java.lang.annotation.Annotation;
 
-public interface ClassAnalyser<T> {
+public interface TypeDeterminator {
     
-    T analyse(Map<String, Class<?>> classes);
+    <T> Class<T> determineClass(Class<T> type, Class<? extends T>[] candidates, Annotation qualifier, ClassLoader classLoader);
     
 }

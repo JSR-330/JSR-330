@@ -27,8 +27,9 @@ import java.util.Map;
 import java.util.Stack;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-class TypeContainer {
+public class TypeContainer {
     
     private static final Field[] EMPTY_FIELD_ARRAY = new Field[] {};
     private static final Method[] EMPTY_METHOD_ARRAY = new Method[] {};
@@ -37,6 +38,7 @@ class TypeContainer {
     protected InjectionSet[] injectionSets;
     protected Class<?> type;
     protected Constructor<?> constructor;
+    protected boolean singleton = false;
     
     public TypeContainer(Class<?> type, Constructor<?> constructor) {
         this.type = type;
@@ -68,6 +70,7 @@ class TypeContainer {
         
         this.injectionSets = injectionSets.toArray(EMPTY_INJECTIONSET_ARRAY);
         
+        singleton = type.isAnnotationPresent(Singleton.class);
         getFieldInformation();
         getMethodInformation();
     }
@@ -182,6 +185,38 @@ class TypeContainer {
             set.fields = objectFields.toArray(EMPTY_FIELD_ARRAY);
             set.staticFields = staticFields.toArray(EMPTY_FIELD_ARRAY);
         }
+    }
+    
+    public InjectionSet[] getInjectionSets() {
+        return injectionSets;
+    }
+    
+    public void setInjectionSets(InjectionSet[] injectionSets) {
+        this.injectionSets = injectionSets;
+    }
+    
+    public Class<?> getType() {
+        return type;
+    }
+    
+    public void setType(Class<?> type) {
+        this.type = type;
+    }
+    
+    public Constructor<?> getConstructor() {
+        return constructor;
+    }
+    
+    public void setConstructor(Constructor<?> constructor) {
+        this.constructor = constructor;
+    }
+    
+    public boolean isSingleton() {
+        return singleton;
+    }
+    
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
     }
     
     @Override
