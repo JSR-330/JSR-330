@@ -13,15 +13,12 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.github.jsr330.instance;
+package com.github.jsr330.spi;
 
-import java.lang.annotation.Annotation;
 import java.util.Map;
 
-public interface ClassInjector {
+public interface ClassScanner {
     
-    void injectStaticMembers(Map<String, Class<?>> classes, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader);
-    
-    <T> T instance(Class<?> type, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader, Class<?>[] generics, Annotation qualifier);
+    Map<String, Class<?>> scan(ClassLoader loader);
     
 }

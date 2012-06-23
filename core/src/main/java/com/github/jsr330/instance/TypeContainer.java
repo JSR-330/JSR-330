@@ -27,8 +27,14 @@ import java.util.Map;
 import java.util.Stack;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 
-class TypeContainer {
+public class TypeContainer {
+    
+    public enum InstanceMode {
+        CONSTRUCTOR, FACTORY_METHOD, PROVIDER
+    }
     
     private static final Field[] EMPTY_FIELD_ARRAY = new Field[] {};
     private static final Method[] EMPTY_METHOD_ARRAY = new Method[] {};
@@ -37,13 +43,17 @@ class TypeContainer {
     protected InjectionSet[] injectionSets;
     protected Class<?> type;
     protected Constructor<?> constructor;
+    protected Provider<?> provider;
+    protected Method factoryMethod;
+    protected boolean singleton = false;
+    protected InstanceMode instanceMode = InstanceMode.CONSTRUCTOR;
     
     public TypeContainer(Class<?> type, Constructor<?> constructor) {
         this.type = type;
         this.constructor = constructor;
     }
     
-    protected void gatherInformation() {
+    public void gatherInformation() {
         Stack<Class<?>> hierarchie;
         Class<?> parent;
         InjectionSet injectionSet;
@@ -68,6 +78,7 @@ class TypeContainer {
         
         this.injectionSets = injectionSets.toArray(EMPTY_INJECTIONSET_ARRAY);
         
+        singleton = type.isAnnotationPresent(Singleton.class);
         getFieldInformation();
         getMethodInformation();
     }
@@ -184,6 +195,62 @@ class TypeContainer {
         }
     }
     
+    public Provider<?> getProvider() {
+        return provider;
+    }
+    
+    public void setProvider(Provider<?> provider) {
+        this.provider = provider;
+    }
+    
+    public InjectionSet[] getInjectionSets() {
+        return injectionSets;
+    }
+    
+    public void setInjectionSets(InjectionSet[] injectionSets) {
+        this.injectionSets = injectionSets;
+    }
+    
+    public Class<?> getType() {
+        return type;
+    }
+    
+    public void setType(Class<?> type) {
+        this.type = type;
+    }
+    
+    public Constructor<?> getConstructor() {
+        return constructor;
+    }
+    
+    public void setConstructor(Constructor<?> constructor) {
+        this.constructor = constructor;
+    }
+    
+    public boolean isSingleton() {
+        return singleton;
+    }
+    
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
+    }
+    
+    public Method getFactoryMethod() {
+        return factoryMethod;
+    }
+    
+    public void setFactoryMethod(Method factoryMethod) {
+        this.factoryMethod = factoryMethod;
+    }
+    
+    public InstanceMode getInstanceMode() {
+        return instanceMode;
+    }
+    
+    public void setInstanceMode(InstanceMode instanceMode) {
+        this.instanceMode = instanceMode;
+    }
+    
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -194,6 +261,12 @@ class TypeContainer {
         builder.append(type);
         builder.append(",\nconstructor=");
         builder.append(constructor);
+        builder.append(",\nfactoryMethod=");
+        builder.append(factoryMethod);
+        builder.append(",\nsingleton=");
+        builder.append(singleton);
+        builder.append(",\ninstanceMode=");
+        builder.append(instanceMode);
         builder.append("]");
         return builder.toString();
     }

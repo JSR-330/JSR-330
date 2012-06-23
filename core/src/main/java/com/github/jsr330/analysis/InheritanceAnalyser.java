@@ -24,6 +24,8 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jsr330.spi.ClassAnalyser;
+
 public class InheritanceAnalyser implements ClassAnalyser<Map<String, Class<?>[]>> {
     
     private static final String[] EMPTY_STRING_ARRAY = new String[] {};

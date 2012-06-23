@@ -15,14 +15,15 @@
  */
 package com.github.jsr330;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import com.github.jsr330.analysis.ClassAnalyser;
 import com.github.jsr330.analysis.InheritanceAnalyser;
-import com.github.jsr330.instance.ClassInjector;
 import com.github.jsr330.instance.DefaultClassInjector;
-import com.github.jsr330.scanning.ClassScanner;
 import com.github.jsr330.scanning.DefaultClassScanner;
+import com.github.jsr330.spi.ClassAnalyser;
+import com.github.jsr330.spi.ClassInjector;
+import com.github.jsr330.spi.ClassScanner;
 
 public class Injector {
     
@@ -55,8 +56,10 @@ public class Injector {
         update();
     }
     
+    @SuppressWarnings("unchecked")
     public <T> T getInstance(Class<T> type) {
-        return instancer.instance(type, inheritance, classLoader, null, null);
+        Map<String, Class<? extends Object>[]> map = new HashMap<String, Class<? extends Object>[]>(inheritance);
+        return (T) instancer.instance((Class<Object>) type, map, classLoader, null, null);
     }
     
     public void update() {

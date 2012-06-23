@@ -13,7 +13,10 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.github.jsr330;
+package com.github.jsr330.spi.config.builder;
+
+import static com.github.jsr330.spi.config.builder.BindingConditions.isNamed;
+import static com.github.jsr330.spi.config.builder.BindingConditions.qualifierIs;
 
 import java.util.Map;
 
@@ -21,7 +24,14 @@ import junit.framework.Test;
 
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
+import org.atinject.tck.auto.Convertible;
+import org.atinject.tck.auto.Drivers;
+import org.atinject.tck.auto.DriversSeat;
+import org.atinject.tck.auto.Seat;
+import org.atinject.tck.auto.Tire;
+import org.atinject.tck.auto.accessories.SpareTire;
 
+import com.github.jsr330.Injector;
 import com.github.jsr330.analysis.InheritanceAnalyser;
 import com.github.jsr330.instance.DefaultClassInjector;
 import com.github.jsr330.scanning.DefaultClassScanner;
@@ -30,12 +40,23 @@ import com.github.jsr330.spi.ClassAnalyser;
 import com.github.jsr330.spi.ClassInjector;
 import com.github.jsr330.spi.ClassScanner;
 
-public class MyTck {
+public class ConfigBuilderTck {
     
     public static Test suite() {
+        InitialBinder<?> binder;
+        ConfigBuilder builder = new ConfigBuilder();
+        
         ClassAnalyser<Map<String, Class<?>[]>> analyser = new InheritanceAnalyser();
-        ClassInjector instancer = new DefaultClassInjector();
+        ClassInjector instancer;
         ClassScanner scanner = new DefaultClassScanner(new RegExSourceDirFilter(".*javax\\.inject-tck-1\\.jar"), null);
+        
+        binder = builder.get();
+        
+        binder.instance(Car.class).as(Convertible.class);
+        binder.instance(Seat.class).as(DriversSeat.class).when(qualifierIs(Seat.class, Drivers.class));
+        binder.instance(Tire.class).as(SpareTire.class).when(isNamed(Tire.class, "spare"));
+        
+        instancer = new DefaultClassInjector(binder.build());
         
         Injector injector = new Injector(Thread.currentThread().getContextClassLoader(), scanner, analyser, instancer);
         Car car = injector.getInstance(Car.class);
