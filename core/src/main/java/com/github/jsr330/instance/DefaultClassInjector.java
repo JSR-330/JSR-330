@@ -35,6 +35,7 @@ import javax.inject.Qualifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jsr330.instance.TypeContainer.InstanceMode;
 import com.github.jsr330.spi.ClassInjector;
 import com.github.jsr330.spi.TypeConfig;
 import com.github.jsr330.spi.TypeDeterminator;
@@ -79,7 +80,7 @@ public class DefaultClassInjector implements ClassInjector {
         
         for (Map.Entry<String, Class<?>> type : classes.entrySet()) {
             typeContainer = generateTypeContainer((Class<Object>) type.getValue(), castedInheritanceTree, null, classLoader);
-            for (InjectionSet set : typeContainer.injectionSets) {
+            for (InjectionSet set : typeContainer.getInjectionSets()) {
                 injectStaticFields(set, (Object) null, castedInheritanceTree, classLoader);
                 injectStaticMethods(set, (Object) null, castedInheritanceTree, classLoader);
             }
@@ -128,9 +129,19 @@ public class DefaultClassInjector implements ClassInjector {
                     typeContainer = generateTypeContainer(type, inheritanceTree, qualifier, classLoader);
                 }
                 
-                if (typeContainer != null && typeContainer.constructor != null) {
+                if (typeContainer != null
+                        && (typeContainer.getInstanceMode() == InstanceMode.CONSTRUCTOR && typeContainer.getConstructor() != null
+                                || typeContainer.getInstanceMode() == InstanceMode.FACTORY_METHOD && typeContainer.getFactoryMethod() != null || typeContainer
+                                .getInstanceMode() == InstanceMode.PROVIDER && typeContainer.getProvider() != null)) {
                     try {
-                        inst = (T) typeContainer.constructor.newInstance(getArguments(typeContainer.constructor, inheritanceTree, classLoader));
+                        if (typeContainer.getInstanceMode() == InstanceMode.FACTORY_METHOD && typeContainer.getFactoryMethod() != null) {
+                            inst = (T) typeContainer.getFactoryMethod().invoke(null,
+                                    getArguments(typeContainer.getFactoryMethod(), inheritanceTree, classLoader));
+                        } else if (typeContainer.getInstanceMode() == InstanceMode.PROVIDER && typeContainer.getProvider() != null) {
+                            inst = (T) typeContainer.getProvider().get();
+                        } else {
+                            inst = (T) typeContainer.getConstructor().newInstance(getArguments(typeContainer.getConstructor(), inheritanceTree, classLoader));
+                        }
                         injectTypeContainer(typeContainer, inst, inheritanceTree, classLoader);
                         
                         if (typeContainer.isSingleton() && !singletons.containsKey(type.getName())) {
@@ -151,22 +162,24 @@ public class DefaultClassInjector implements ClassInjector {
         Constructor<?> ctor;
         TypeContainer typeContainer = null;
         
-        if (config == null || (typeContainer = config.getTypeContainer(this, type, inheritanceTree, qualifier, classLoader)) == null) {
-            ctor = getInjectableConstructor(type);
-            if (ctor == null) {
-                ctor = getDefaultConstructor(type);
+        if (type != null) {
+            if (config == null || (typeContainer = config.getTypeContainer(this, type, inheritanceTree, qualifier, classLoader)) == null) {
+                ctor = getInjectableConstructor(type);
+                if (ctor == null) {
+                    ctor = getDefaultConstructor(type);
+                }
+                
+                typeContainer = new TypeContainer(type, ctor);
+                typeContainer.gatherInformation();
             }
-            
-            typeContainer = new TypeContainer(type, ctor);
-            typeContainer.gatherInformation();
+            types.put(type.getName(), typeContainer);
         }
-        types.put(type.getName(), typeContainer);
         
         return typeContainer;
     }
     
     protected <T> void injectTypeContainer(TypeContainer typeContainer, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
-        for (InjectionSet set : typeContainer.injectionSets) {
+        for (InjectionSet set : typeContainer.getInjectionSets()) {
             injectFields(set, inst, inheritanceTree, classLoader);
             injectMethods(set, inst, inheritanceTree, classLoader);
         }
@@ -189,9 +202,9 @@ public class DefaultClassInjector implements ClassInjector {
         Class<? extends T>[] candidates;
         Annotation qualifier;
         
-        for (Field field : onlyStatic ? set.staticFields : set.fields) {
+        for (Field field : onlyStatic ? set.getStaticFields() : set.getFields()) {
             try {
-                LOGGER.debug("injectFields - field injected {} of {}", field, set.type);
+                LOGGER.debug("injectFields - field injected {} of {}", field, set.getType());
                 if (field.getGenericType() instanceof ParameterizedType) {
                     parameterizedType = (ParameterizedType) field.getGenericType();
                     generics = getGenericTypes(parameterizedType);
@@ -228,9 +241,9 @@ public class DefaultClassInjector implements ClassInjector {
             boolean onlyStatic) {
         Object[] arguments;
         
-        for (Method method : onlyStatic ? set.staticMethods : set.methods) {
+        for (Method method : onlyStatic ? set.getStaticMethods() : set.getMethods()) {
             try {
-                LOGGER.debug("injectMethods - method injected {} of {}", method, set.type);
+                LOGGER.debug("injectMethods - method injected {} of {}", method, set.getType());
                 arguments = getArguments(method, inheritanceTree, classLoader);
                 if (arguments != null) {
                     method.invoke(inst, arguments);

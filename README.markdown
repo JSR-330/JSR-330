@@ -113,7 +113,7 @@ One can alternatively use the ``@Named`` annotation to determine the correct typ
 
 So far the specification!
 
-This implementation provides you a way of determining the correct implementation for a specific type by using a ``TypeDeterminator``.
+This implementation provides you a way of determining the correct implementation for a specific type by using a ``TypeDeterminator`` if multiple implementations are available.
 E.g.:
 
 ```java
@@ -145,4 +145,76 @@ instancer.setTypeDeterminator(new MyTypeDeterminator());
 
 Injector injector = new Injector(Thread.currentThread().getContextClassLoader(), scanner, analyser, instancer);
 
+```
+
+Another way to customize the ``type configuration`` is to use one of the ``TypeConfig`` providers.
+
+### ConfigBuilder
+
+The ``ConfigBuilder`` is a [Google-Guice](http://code.google.com/p/google-guice/)-like configuration tool.
+The semantic is as follows:
+
+```java
+import com.github.jsr330.spi.config.builder.ConfigBuilder;
+
+new ConfigBuilder()
+    .instance(type)
+    .( as(type) | asSingleton() | asSingleton(type) | with(Provider<type>) )
+    .( when(condition) | using(constructor) | using(method) )
+    .( when(condition) | and(condition) | or(condition) | xor(condition) )
+    .build();
+```
+
+An example for passing the TCK:
+
+```java
+import static com.github.jsr330.spi.config.builder.BindingConditions.*;
+import com.github.jsr330.spi.config.builder.*;
+
+public class ConfigBuilderTck {
+    
+    public static Test suite() {
+        InitialBinder<?> binder;
+        ConfigBuilder builder = new ConfigBuilder();
+        
+        ...
+        
+        binder = builder.get();
+        
+        binder.instance(Car.class).as(Convertible.class);
+        binder.instance(Seat.class).as(DriversSeat.class).when(qualifierIs(Seat.class, Drivers.class));
+        binder.instance(Tire.class).as(SpareTire.class).when(isNamed(Tire.class, "spare"));
+        
+        instancer = new DefaultClassInjector(binder.build());
+        
+        Injector injector = new Injector(Thread.currentThread().getContextClassLoader(), scanner, analyser, instancer);
+        
+        ...
+    }
+    
+}
+```
+
+### JSON Config
+
+```java
+// TODO
+```
+
+### XML Config
+
+```java
+// TODO
+```
+
+### Write your own ClassInjector
+
+```java
+// TODO
+```
+
+### Write your own TypeConfig
+
+```java
+// TODO
 ```
