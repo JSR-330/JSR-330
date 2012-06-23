@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jsr330.GenericFilter;
+import com.github.jsr330.spi.ClassScanner;
 
 public class DefaultClassScanner implements ClassScanner {
     

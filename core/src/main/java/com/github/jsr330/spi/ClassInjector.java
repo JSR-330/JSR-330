@@ -13,12 +13,17 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.github.jsr330.instance;
+package com.github.jsr330.spi;
 
 import java.lang.annotation.Annotation;
+import java.util.Map;
 
-public interface TypeDeterminator {
+public interface ClassInjector {
     
-    Class<?> determineClass(Class<?> type, Class<?>[] candidates, Annotation qualifier, ClassLoader classLoader);
+    void injectStaticMembers(Map<String, Class<?>> classes, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader);
+    
+    <T> T instance(Class<T> type, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader, Class<?>[] generics, Annotation qualifier);
+    
+    void setTypeConfig(TypeConfig config);
     
 }

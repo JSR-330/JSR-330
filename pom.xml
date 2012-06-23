@@ -9,7 +9,7 @@
 
     <groupId>com.github.jsr-330</groupId>
     <artifactId>all</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.2.0</version>
     <packaging>pom</packaging>
     <name>JSR-330 Parent</name>
 
@@ -123,6 +123,7 @@
                         <runOrder>alphabetical</runOrder>
                         <includes>
                             <include>**/*Tck.java</include>
+                            <include>**/*Test.java</include>
                         </includes>
                     </configuration>
                     <dependencies>
@@ -260,7 +261,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -314,14 +315,6 @@
                 <configuration>
                     <message>Creating site for ${project.version}</message>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>site-deploy</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

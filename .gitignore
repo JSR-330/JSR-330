@@ -3,3 +3,6 @@
 /.classpath
 /.project
 /*.log
+/*.xml.releaseBackup
+/**/*.xml.releaseBackup
+/release.properties

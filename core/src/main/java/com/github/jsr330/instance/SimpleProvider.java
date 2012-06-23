@@ -20,15 +20,18 @@ import java.util.Map;
 
 import javax.inject.Provider;
 
-public class SimpleProvider implements Provider<Object> {
+import com.github.jsr330.spi.ClassInjector;
+
+public class SimpleProvider<T> implements Provider<T> {
     
-    protected Class<?> type;
+    protected Class<T> type;
     protected ClassInjector instancer;
-    protected Map<String, Class<?>[]> inheritanceTree;
+    protected Map<String, Class<? extends T>[]> inheritanceTree;
     protected ClassLoader classLoader;
     protected Annotation qualifier;
     
-    public SimpleProvider(Class<?> type, ClassInjector instancer, Map<String, Class<?>[]> inheritanceTree, Annotation qualifier, ClassLoader classLoader) {
+    public SimpleProvider(Class<T> type, ClassInjector instancer, Map<String, Class<? extends T>[]> inheritanceTree, Annotation qualifier,
+            ClassLoader classLoader) {
         this.type = type;
         this.instancer = instancer;
         this.inheritanceTree = inheritanceTree;
@@ -37,7 +40,7 @@ public class SimpleProvider implements Provider<Object> {
     }
     
     @Override
-    public Object get() {
+    public T get() {
         return instancer.instance(type, inheritanceTree, classLoader, null, qualifier);
     }
     
