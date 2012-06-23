@@ -58,8 +58,8 @@ public class DefaultClassInjectorTest {
         classes = new HashMap<String, Class<?>>();
         inheritanceTree = new HashMap<String, Class<?>[]>();
         classLoader = Thread.currentThread().getContextClassLoader();
-        typeContainer.injectionSets = new InjectionSet[] { injectionSet };
         
+        when(typeContainer.getInjectionSets()).thenReturn(new InjectionSet[] { injectionSet });
         when(injectionSet.getFields()).thenReturn(new Field[] {});
         when(injectionSet.getStaticFields()).thenReturn(new Field[] {});
         when(injectionSet.getMethods()).thenReturn(new Method[] {});
@@ -107,9 +107,10 @@ public class DefaultClassInjectorTest {
     public void injectStaticMembers_WithClasses() {
         classes.put(Bean.class.getName(), Bean.class);
         
-        when(defaultClassInjector.generateTypeContainer(eq(Bean.class), any(Map.class), (Annotation) eq(null), same(classLoader))).thenReturn(typeContainer);
+        when(defaultClassInjector.generateTypeContainer(any(Class.class), any(Map.class), (Annotation) eq(null), same(classLoader))).thenReturn(typeContainer);
         defaultClassInjector.injectStaticMembers(classes, inheritanceTree, classLoader);
         
+        verify(typeContainer).getInjectionSets();
         verify(defaultClassInjector).generateTypeContainer(eq(Bean.class), any(Map.class), (Annotation) eq(null), same(classLoader));
         verify(defaultClassInjector).injectStaticFields(same(injectionSet), eq(null), any(Map.class), same(classLoader));
         verify(defaultClassInjector).injectStaticMethods(same(injectionSet), eq(null), any(Map.class), same(classLoader));
