@@ -1,0 +1,17 @@
+[
+    {
+    	"org.atinject.tck.auto.Car" : {"as" : "org.atinject.tck.auto.Convertible"}
+    },
+    {
+    	"org.atinject.tck.auto.Seat" : {
+    	    "as" : "org.atinject.tck.auto.DriversSeat",
+    	    "when" : "$qualifierIs(org.atinject.tck.auto.Drivers)"
+    	}
+    },
+    {
+    	"org.atinject.tck.auto.Tire" : {
+    	    "as" : "org.atinject.tck.auto.accessories.SpareTire",
+    	    "when" : "$isNamed(spare)"
+    	}
+    }
+]

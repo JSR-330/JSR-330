@@ -197,9 +197,51 @@ public class ConfigBuilderTck {
 
 ### JSON Config
 
-```java
-// TODO
+If you like to express you bindings via JSON you can do it like this:
+
+```json
+[
+    {
+    	"org.atinject.tck.auto.Car" : {"as" : "org.atinject.tck.auto.Convertible"}
+    },
+    {
+    	"org.atinject.tck.auto.Seat" : {
+    	    "as" : "org.atinject.tck.auto.DriversSeat",
+    	    "when" : "$qualifierIs(org.atinject.tck.auto.Drivers)"
+    	}
+    },
+    {
+    	"org.atinject.tck.auto.Tire" : {
+    	    "as" : "org.atinject.tck.auto.accessories.SpareTire",
+    	    "when" : "$isNamed(spare)"
+    	}
+    }
+]
 ```
+
+```java
+import com.github.jsr330.spi.config.json.JsonConfig;
+
+public class JsonConfigTck {
+    
+    public static Test suite() throws Exception {
+        ClassAnalyser<Map<String, Class<?>[]>> analyser = new InheritanceAnalyser();
+        ClassInjector instancer;
+        ClassScanner scanner = new DefaultClassScanner(new RegExSourceDirFilter(".*javax\\.inject-tck-1\\.jar"), null);
+        
+        JsonConfig config = new JsonConfig(new File("./src/test/resources/tck.json"));
+        
+        instancer = new DefaultClassInjector(config.getConfig(Thread.currentThread().getContextClassLoader()));
+        
+        Injector injector = new Injector(Thread.currentThread().getContextClassLoader(), scanner, analyser, instancer);
+        Car car = injector.getInstance(Car.class);
+        return Tck.testsFor(car, true, true);
+    }
+}
+```
+
+At the moment the only conditions available are those defined in ``com.github.jsr330.spi.config.builder.BindingConditions`` except ``and``, ``or`` and ``xor``.
+Also nested conditions are not yet available. The JSON Config module is based on the ConfigBuilder module explained above.
 
 ### XML Config
 
