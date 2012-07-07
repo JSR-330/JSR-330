@@ -28,15 +28,44 @@
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> java.lang.annotation.Annotation;
 <a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
 <a class="jxr_linenumber" name="20" href="#20">20</a>  
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a href="../../../../com/github/jsr330/spi/ClassInjector.html">ClassInjector</a> {
-<a class="jxr_linenumber" name="22" href="#22">22</a>      
-<a class="jxr_linenumber" name="23" href="#23">23</a>      <strong class="jxr_keyword">void</strong> injectStaticMembers(Map&lt;String, Class&lt;?&gt;&gt; classes, Map&lt;String, Class&lt;?&gt;[]&gt; inheritanceTree, ClassLoader classLoader);
-<a class="jxr_linenumber" name="24" href="#24">24</a>      
-<a class="jxr_linenumber" name="25" href="#25">25</a>      &lt;T&gt; T instance(Class&lt;T&gt; type, Map&lt;String, Class&lt;? <strong class="jxr_keyword">extends</strong> T&gt;[]&gt; inheritanceTree, ClassLoader classLoader, Class&lt;?&gt;[] generics, Annotation qualifier);
-<a class="jxr_linenumber" name="26" href="#26">26</a>      
-<a class="jxr_linenumber" name="27" href="#27">27</a>      <strong class="jxr_keyword">void</strong> setTypeConfig(<a href="../../../../com/github/jsr330/spi/TypeConfig.html">TypeConfig</a> config);
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> com.github.jsr330.Injector;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment"> * A class injector does the actual work for the DI framework: instance all static methods and fields once and getting an instance of type X</em>
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment"> * with respect to the possibly assigned {@link TypeConfig}.</em>
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a href="../../../../com/github/jsr330/spi/ClassInjector.html">ClassInjector</a> {
 <a class="jxr_linenumber" name="28" href="#28">28</a>      
-<a class="jxr_linenumber" name="29" href="#29">29</a>  }
+<a class="jxr_linenumber" name="29" href="#29">29</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment">     * Injects all static fields and methods of the classes specified once in a lifetime of an {@link Injector}.</em>
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment">     * @param classes The classes which static members are going to be injected.</em>
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment">     * @param inheritanceTree The entire inheritance tree of all known classes.</em>
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment">     * @param classLoader The class loader which loaded all the classes.</em>
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">void</strong> injectStaticMembers(Map&lt;String, Class&lt;?&gt;&gt; classes, Map&lt;String, Class&lt;?&gt;[]&gt; inheritanceTree, ClassLoader classLoader);
+<a class="jxr_linenumber" name="37" href="#37">37</a>      
+<a class="jxr_linenumber" name="38" href="#38">38</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     * Get an injected instance of the specified type back.</em>
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * @param type The type to be instanced.</em>
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     * @param generics The type parameters of a may generic type - can be {@code null}.</em>
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     * @param qualifier A possible qualifier for the instance of the type.</em>
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     * @param inheritanceTree The entire inheritance tree of all known classes.</em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">     * @param classLoader The class loader which loaded all the classes.</em>
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <em class="jxr_javadoccomment">     * @return Returns the injected instance of the specified type.</em>
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="49" href="#49">49</a>      &lt;T&gt; T instance(Class&lt;T&gt; type, Map&lt;String, Class&lt;? <strong class="jxr_keyword">extends</strong> T&gt;[]&gt; inheritanceTree, ClassLoader classLoader, Class&lt;?&gt;[] generics, Annotation qualifier);
+<a class="jxr_linenumber" name="50" href="#50">50</a>      
+<a class="jxr_linenumber" name="51" href="#51">51</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment">     * Assigns a new {@link TypeConfig}.</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment">     * @param config The new TypeConfig - can be {@code null}.</em>
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">void</strong> setTypeConfig(<a href="../../../../com/github/jsr330/spi/TypeConfig.html">TypeConfig</a> config);
+<a class="jxr_linenumber" name="57" href="#57">57</a>      
+<a class="jxr_linenumber" name="58" href="#58">58</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

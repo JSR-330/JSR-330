@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-06-25T21:13:31.191">
+<pmd version="4.3" timestamp="2012-07-07T23:56:57.377">
 <file name="D:\git\jsr330\config-json\src\main\java\com\github\jsr330\spi\config\json\JsonConfig.java">
-<violation beginline="1" endline="249" begincolumn="1" endcolumn="3" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="com.github.jsr330.spi.config.json" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
+<violation beginline="1" endline="282" begincolumn="1" endcolumn="3" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="com.github.jsr330.spi.config.json" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
 Too many static imports may lead to messy code
 </violation>
 </file>
 <file name="D:\git\jsr330\core\src\main\java\com\github\jsr330\instance\DefaultClassInjector.java">
-<violation beginline="119" endline="121" begincolumn="21" endcolumn="21" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="com.github.jsr330.instance" class="DefaultClassInjector" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="132" endline="134" begincolumn="21" endcolumn="21" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="com.github.jsr330.instance" class="DefaultClassInjector" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
 </file>
 <file name="D:\git\jsr330\core\src\main\java\com\github\jsr330\scanning\DefaultClassScanner.java">
-<violation beginline="80" endline="82" begincolumn="21" endcolumn="21" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="com.github.jsr330.scanning" class="DefaultClassScanner" method="scan" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="84" endline="86" begincolumn="21" endcolumn="21" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="com.github.jsr330.scanning" class="DefaultClassScanner" method="scan" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
 </file>
