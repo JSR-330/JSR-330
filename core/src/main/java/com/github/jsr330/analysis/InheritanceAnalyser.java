@@ -26,12 +26,18 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jsr330.spi.ClassAnalyser;
 
+/**
+ * This analyser maps types to their implementations.
+ */
 public class InheritanceAnalyser implements ClassAnalyser<Map<String, Class<?>[]>> {
     
     private static final String[] EMPTY_STRING_ARRAY = new String[] {};
     private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[] {};
     private static final Logger LOGGER = LoggerFactory.getLogger(InheritanceAnalyser.class);
     
+    /**
+     * Simply maps the interfaces or abstract classes to their implementations.
+     */
     @Override
     public Map<String, Class<?>[]> analyse(Map<String, Class<?>> classes) {
         Map<String, Class<?>[]> inheritances = new TreeMap<String, Class<?>[]>();

@@ -19,6 +19,9 @@ import java.util.regex.Pattern;
 
 import com.github.jsr330.GenericFilter;
 
+/**
+ * A regexp filter for classnames.
+ */
 public class RegExClassnameFilter implements GenericFilter<String> {
     
     protected Pattern regex;

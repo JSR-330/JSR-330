@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config xmlns="http://jsr-330.github.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jsr-330.github.com jsr-330-xml-config.xsd">
+
+    <instance classname="org.atinject.tck.auto.Car">
+        <as classname="org.atinject.tck.auto.Convertible"/>
+    </instance>
+
+    <instance classname="org.atinject.tck.auto.Seat">
+        <as classname="org.atinject.tck.auto.DriversSeat"/>
+        <when>
+            <qualifierIs classname="org.atinject.tck.auto.Drivers"/>
+        </when>
+    </instance>
+
+    <instance classname="org.atinject.tck.auto.Tire">
+        <as classname="org.atinject.tck.auto.accessories.SpareTire"/>
+        <when>
+            <isNamed value="spare"/>
+        </when>
+    </instance>
+
+</config>

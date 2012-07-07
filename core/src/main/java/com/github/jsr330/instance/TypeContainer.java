@@ -30,6 +30,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+/**
+ * This is an information container for classes.
+ */
 public class TypeContainer {
     
     public enum InstanceMode {
@@ -40,12 +43,33 @@ public class TypeContainer {
     private static final Method[] EMPTY_METHOD_ARRAY = new Method[] {};
     private static final InjectionSet[] EMPTY_INJECTIONSET_ARRAY = new InjectionSet[] {};
     
+    /**
+     * The injection information in inheritance order (base class to subclass).
+     */
     protected InjectionSet[] injectionSets;
+    /**
+     * The type to inject.
+     */
     protected Class<?> type;
+    /**
+     * The constructor to instantiate the bean.
+     */
     protected Constructor<?> constructor;
+    /**
+     * The provider to instantiate the bean.
+     */
     protected Provider<?> provider;
+    /**
+     * The (static) method to instantiate the bean.
+     */
     protected Method factoryMethod;
+    /**
+     * Indicates that this bean is a singleton.
+     */
     protected boolean singleton = false;
+    /**
+     * The mode for the instantiation (method, constructor or provider).
+     */
     protected InstanceMode instanceMode = InstanceMode.CONSTRUCTOR;
     
     public TypeContainer(Class<?> type, Constructor<?> constructor) {
@@ -53,6 +77,9 @@ public class TypeContainer {
         this.constructor = constructor;
     }
     
+    /**
+     * Collects some basic information about the type (base classes, injection sets).
+     */
     public void gatherInformation() {
         Stack<Class<?>> hierarchie;
         Class<?> parent;
@@ -83,6 +110,9 @@ public class TypeContainer {
         getMethodInformation();
     }
     
+    /**
+     * Iterates through every injection set in order of inheritance to determine with method should be invoked when injection values.
+     */
     protected void getMethodInformation() {
         List<Method> methods = new ArrayList<Method>();
         List<Method> staticMethods = new ArrayList<Method>();
@@ -150,6 +180,9 @@ public class TypeContainer {
         }
     }
     
+    /**
+     * Gets the name of the package out of the method.
+     */
     protected String getPackageName(Method method) {
         String name;
         int index = (name = method.getDeclaringClass().getName()).lastIndexOf('.');
@@ -161,10 +194,17 @@ public class TypeContainer {
         }
     }
     
+    /**
+     * Indicates if the two method are in the same package (not necessarily code base).
+     * This is to avoid the removal of methods that are package private and not overridden by same-named methods in different-packaged subclasses.
+     */
     protected boolean isSamePackage(Method oldMethod, Method method) {
         return oldMethod.getDeclaringClass().getPackage().equals(method.getDeclaringClass().getPackage());
     }
     
+    /**
+     * Iterates through all non-static fields in inheritance order.
+     */
     protected void getFieldInformation() {
         Field[] fields;
         List<Field> objectFields = new ArrayList<Field>();

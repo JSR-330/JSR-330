@@ -40,6 +40,9 @@ import com.github.jsr330.spi.ClassInjector;
 import com.github.jsr330.spi.TypeConfig;
 import com.github.jsr330.spi.TypeDeterminator;
 
+/**
+ * This ClassInjector instances type with respect to the {@link TypeConfig} and the {@link TypeDeterminator} assigned.
+ */
 public class DefaultClassInjector implements ClassInjector {
     
     private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[] {};
@@ -72,6 +75,9 @@ public class DefaultClassInjector implements ClassInjector {
         this.config = config;
     }
     
+    /**
+     * Injects the static members in inheritance order.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void injectStaticMembers(Map<String, Class<?>> classes, Map<String, Class<?>[]> inheritanceTree, ClassLoader classLoader) {
@@ -87,6 +93,13 @@ public class DefaultClassInjector implements ClassInjector {
         }
     }
     
+    /**
+     * Instances the specified type.
+     * If a provider is wanted a {@link SimpleProvider} is returned with the corresponding generic as type.
+     * If the type is declared a singleton an already instanced bean of that type is returned.
+     * Otherwise the whole injection stack will be processed.
+     * This method caches it's results.
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T instance(Class<T> type, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader, Class<?>[] generics, Annotation qualifier) {
@@ -157,6 +170,9 @@ public class DefaultClassInjector implements ClassInjector {
         return inst;
     }
     
+    /**
+     * Gets the {@link TypeContainer} for the specified type. Asking the {@link TypeConfig} assigned before the entire investigation stack will be processed.
+     */
     protected <T> TypeContainer generateTypeContainer(Class<T> type, Map<String, Class<? extends T>[]> inheritanceTree, Annotation qualifier,
             ClassLoader classLoader) {
         Constructor<?> ctor;
@@ -178,6 +194,9 @@ public class DefaultClassInjector implements ClassInjector {
         return typeContainer;
     }
     
+    /**
+     * Do the entire non-static injection of the bean.
+     */
     protected <T> void injectTypeContainer(TypeContainer typeContainer, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         for (InjectionSet set : typeContainer.getInjectionSets()) {
             injectFields(set, inst, inheritanceTree, classLoader);
@@ -185,14 +204,23 @@ public class DefaultClassInjector implements ClassInjector {
         }
     }
     
+    /**
+     * Injects the static fields of the specified type.
+     */
     protected <T> void injectStaticFields(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         injectFields(set, inst, inheritanceTree, classLoader, true);
     }
     
+    /**
+     * Injects the non-static fields of the specified bean.
+     */
     protected <T> void injectFields(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         injectFields(set, inst, inheritanceTree, classLoader, false);
     }
     
+    /**
+     * Injects the fields of the specified type / bean.
+     */
     @SuppressWarnings("unchecked")
     protected <T> void injectFields(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader,
             boolean onlyStatic) {
@@ -229,14 +257,23 @@ public class DefaultClassInjector implements ClassInjector {
         }
     }
     
+    /**
+     * Injects the static methods of the specified type.
+     */
     protected <T> void injectStaticMethods(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         injectMethods(set, inst, inheritanceTree, classLoader, true);
     }
     
+    /**
+     * Injects the non-static methods of the specified bean.
+     */
     protected <T> void injectMethods(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         injectMethods(set, inst, inheritanceTree, classLoader, false);
     }
     
+    /**
+     * Injects the methods of the specified type / bean.
+     */
     protected <T> void injectMethods(InjectionSet set, Object inst, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader,
             boolean onlyStatic) {
         Object[] arguments;
@@ -256,14 +293,23 @@ public class DefaultClassInjector implements ClassInjector {
         }
     }
     
+    /**
+     * Gets the arguments for the method.
+     */
     protected <T> Object[] getArguments(Method method, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         return getArguments(inheritanceTree, method.getParameterTypes(), method.getGenericParameterTypes(), method.getParameterAnnotations(), classLoader);
     }
     
+    /**
+     * Gets the arguments for the constructor.
+     */
     protected <T> Object[] getArguments(Constructor<?> ctor, Map<String, Class<? extends T>[]> inheritanceTree, ClassLoader classLoader) {
         return getArguments(inheritanceTree, ctor.getParameterTypes(), ctor.getGenericParameterTypes(), ctor.getParameterAnnotations(), classLoader);
     }
     
+    /**
+     * Gets the arguments for the method / constructor.
+     */
     @SuppressWarnings("unchecked")
     protected <T> Object[] getArguments(Map<String, Class<? extends T>[]> inheritanceTree, Class<?>[] parameters, Type[] generics, Annotation[][] annotations,
             ClassLoader classLoader) {
@@ -293,6 +339,9 @@ public class DefaultClassInjector implements ClassInjector {
         return arguments;
     }
     
+    /**
+     * Gets the annotation that is assignable from {@link Qualifier}.
+     */
     protected Annotation getQualifier(Annotation[] annotations) {
         if (annotations != null && annotations.length > 0) {
             for (Annotation annotation : annotations) {
@@ -305,6 +354,9 @@ public class DefaultClassInjector implements ClassInjector {
         return null;
     }
     
+    /**
+     * Gets the constructor annotated with {@link Inject}.
+     */
     protected Constructor<?> getInjectableConstructor(Class<?> type) {
         Constructor<?>[] ctors = type.getDeclaredConstructors();
         
@@ -321,6 +373,9 @@ public class DefaultClassInjector implements ClassInjector {
         return null;
     }
     
+    /**
+     * Gets the default no-args constructor.
+     */
     protected Constructor<?> getDefaultConstructor(Class<?> type) {
         Constructor<?>[] ctors = type.getDeclaredConstructors();
         
@@ -337,6 +392,9 @@ public class DefaultClassInjector implements ClassInjector {
         return null;
     }
     
+    /**
+     * Gets the type-classes of the parameterizedType.
+     */
     protected Class<?>[] getGenericTypes(ParameterizedType type) {
         List<Class<?>> list = new ArrayList<Class<?>>();
         

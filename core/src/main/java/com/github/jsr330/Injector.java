@@ -25,13 +25,34 @@ import com.github.jsr330.spi.ClassAnalyser;
 import com.github.jsr330.spi.ClassInjector;
 import com.github.jsr330.spi.ClassScanner;
 
+/**
+ * The Injector is used to instantiate any kind of java object.
+ */
 public class Injector {
     
+    /**
+     * The class loader for the injection.
+     */
     protected ClassLoader classLoader;
+    /**
+     * The scanner for the classes.
+     */
     protected ClassScanner scanner = new DefaultClassScanner();
+    /**
+     * The inheritance analyser.
+     */
     protected ClassAnalyser<Map<String, Class<?>[]>> analyser = new InheritanceAnalyser();
+    /**
+     * The class injector.
+     */
     protected ClassInjector instancer = new DefaultClassInjector();
+    /**
+     * The classes from the class scanner.
+     */
     protected Map<String, Class<?>> classes;
+    /**
+     * The inheritance tree.
+     */
     protected Map<String, Class<?>[]> inheritance;
     
     public Injector() {
@@ -56,12 +77,18 @@ public class Injector {
         update();
     }
     
+    /**
+     * Gets an instance of the specified type back.
+     */
     @SuppressWarnings("unchecked")
     public <T> T getInstance(Class<T> type) {
         Map<String, Class<? extends Object>[]> map = new HashMap<String, Class<? extends Object>[]>(inheritance);
         return (T) instancer.instance((Class<Object>) type, map, classLoader, null, null);
     }
     
+    /**
+     * reruns class scanning, inheritance tree creation and static member initialization.
+     */
     public void update() {
         classes = scanner.scan(classLoader);
         inheritance = analyser.analyse(classes);

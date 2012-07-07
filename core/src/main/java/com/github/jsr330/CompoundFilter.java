@@ -15,13 +15,25 @@
  */
 package com.github.jsr330;
 
+/**
+ * This filter combines multiple other filters.
+ */
 public class CompoundFilter<T> implements GenericFilter<T> {
     
+    /**
+     * The combination mode.
+     */
     public enum Mode {
         AND, OR, XOR
     }
     
+    /**
+     * The filters.
+     */
     protected GenericFilter<T>[] filters;
+    /**
+     * The combination mode.
+     */
     protected Mode mode;
     
     public CompoundFilter(Mode mode, GenericFilter<T>... filters) {

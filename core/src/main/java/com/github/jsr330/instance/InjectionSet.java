@@ -19,6 +19,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+/**
+ * A set of type information containing (static) methods and (static) fields.
+ */
 public class InjectionSet {
     
     protected Method[] methods;

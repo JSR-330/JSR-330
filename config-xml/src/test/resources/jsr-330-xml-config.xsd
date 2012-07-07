@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://jsr-330.github.com"
+    xmlns="http://jsr-330.github.com"
+    elementFormDefault="qualified">
+    
+    <xs:element name="config">
+        <xs:complexType>
+            <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                <xs:element name="instance">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:choice minOccurs="1" maxOccurs="1">
+                                <xs:element name="as" type="classnameAttributed">
+                                    <xs:annotation>
+                                        <xs:documentation>The implementation of the type (no interface or abstract class!).</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                
+                                <xs:element name="asSingleton" type="classnameAttributed">
+                                    <xs:annotation>
+                                        <xs:documentation>The implementation of the type (no interface or abstract class!).</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                
+                                <xs:element name="with" type="classnameAttributed">
+                                    <xs:annotation>
+                                        <xs:documentation>The provider used to instantiate the type.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:choice>
+                            
+                            <xs:sequence minOccurs="0" maxOccurs="1">
+                                <xs:sequence minOccurs="0" maxOccurs="1">
+                                    <xs:choice>
+                                        <xs:sequence minOccurs="0" maxOccurs="1">
+                                            <xs:element name="using" type="usingType"/>
+                                            <xs:element name="when" type="conditionType" minOccurs="0" maxOccurs="1"/>
+                                            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                                                <xs:choice>
+                                                    <xs:element name="and" type="conditionType"/>
+                                                    <xs:element name="or" type="conditionType"/>
+                                                    <xs:element name="xor" type="conditionType"/>
+                                                </xs:choice>
+                                            </xs:sequence>
+                                        </xs:sequence>
+                                        
+                                        <xs:sequence minOccurs="0" maxOccurs="1">
+                                            <xs:element name="when" type="conditionType"/>
+                                            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                                                <xs:choice>
+                                                    <xs:element name="and" type="conditionType"/>
+                                                    <xs:element name="or" type="conditionType"/>
+                                                    <xs:element name="xor" type="conditionType"/>
+                                                </xs:choice>
+                                            </xs:sequence>
+                                        </xs:sequence>
+                                    </xs:choice>
+                                </xs:sequence>
+                            </xs:sequence>
+                        </xs:sequence>
+                        
+                        <xs:attribute name="classname" type="xs:string" use="required">
+                            <xs:annotation>
+                                <xs:documentation>The fully qualified class name of the type (interface, class or abstract class)</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    
+    <xs:complexType name="conditionType">
+        <xs:annotation>
+            <xs:documentation>The condition under which the instantiation should take place.</xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="1" maxOccurs="1">
+            <xs:element name="annotationIsPresent" type="classnameAttributed"/>
+            
+            <xs:element name="qualifierIs" type="classnameAttributed"/>
+            
+            <xs:element name="isNamed">
+                <xs:annotation>
+                    <xs:documentation>The value of the @Named annotation.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:attribute name="value" use="required"/>
+                </xs:complexType>
+            </xs:element>
+            
+            <xs:element name="isNamedIgnoringCase">
+                <xs:annotation>
+                    <xs:documentation>The value of the @Named annotation (case insensitive).</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:attribute name="value" use="required"/>
+                </xs:complexType>
+            </xs:element>
+            
+            <xs:element name="allAnnotationsArePresent">
+                <xs:complexType>
+                    <xs:annotation>
+                        <xs:documentation>A list of annotations.</xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                        <xs:element name="annotation" type="classnameAttributed"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            
+            <xs:element name="anyAnnotationIsPresent">
+                <xs:complexType>
+                    <xs:annotation>
+                        <xs:documentation>A list of annotations.</xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                        <xs:element name="annotation" type="classnameAttributed"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    
+    <xs:complexType name="usingType">
+        <xs:annotation>
+            <xs:documentation>Using a constructor or a method to instantiate the type.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="parameter" type="classnameAttributed"/>
+        </xs:sequence>
+        <xs:attribute name="type" type="usingChoices" use="required">
+            <xs:annotation>
+                <xs:documentation>Determines if a factory method or a constructor should used to instantiate the type.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>Defines the name of the factory method.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    
+    <xs:complexType name="classnameAttributed">
+        <xs:attribute name="classname" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>The fully qualified class name.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+        
+    <xs:simpleType name="usingChoices">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="method"/>
+            <xs:enumeration value="constructor"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+</xs:schema>

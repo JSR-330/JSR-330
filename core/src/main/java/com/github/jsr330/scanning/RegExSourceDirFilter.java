@@ -20,6 +20,9 @@ import java.util.regex.Pattern;
 
 import com.github.jsr330.GenericFilter;
 
+/**
+ * A regexp filter for the source directories and / or jar files.
+ */
 public class RegExSourceDirFilter implements GenericFilter<URI> {
     
     protected Pattern regex;
