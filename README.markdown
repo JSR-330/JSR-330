@@ -113,8 +113,13 @@ One can alternatively use the ``@Named`` annotation to determine the correct typ
 
 So far the specification!
 
-This implementation provides you a way of determining the correct implementation for a specific type by using a ``TypeDeterminator`` if multiple implementations are available.
-E.g.:
+There are three stages of configuration in this project:
+
+* writing a ``TypeDeterminator`` which merely chooses one of the possibilities given to it (together with some extra information)
+* writing a ``TypeConfig`` which merely offers a configuration for a specific type (it doesn't have to deliver a configuration for each type)
+* writing a ``ClassInjector`` which does all the stuff needed to be a valid DI implementation.
+
+### TypeDeterminators
 
 ```java
 public class MyTypeDeterminator implements TypeDeterminator {
@@ -147,9 +152,9 @@ Injector injector = new Injector(Thread.currentThread().getContextClassLoader(),
 
 ```
 
-Another way to customize the ``type configuration`` is to use one of the ``TypeConfig`` providers.
+### TypeConfigs
 
-### ConfigBuilder
+#### ConfigBuilder
 
 The ``ConfigBuilder`` is a [Google-Guice](http://code.google.com/p/google-guice/)-like configuration tool.
 The semantic is as follows:
@@ -195,7 +200,7 @@ public class ConfigBuilderTck {
 }
 ```
 
-### JSON Config
+#### JSON Config
 
 If you like to express you bindings via JSON you can do it like this:
 
@@ -243,20 +248,136 @@ public class JsonConfigTck {
 At the moment the only conditions available are those defined in ``com.github.jsr330.spi.config.builder.BindingConditions`` except ``and``, ``or`` and ``xor``.
 Also nested conditions are not yet available. The JSON Config module is based on the ConfigBuilder module explained above.
 
-### XML Config
+#### XML Config
+
+The XML configuration works as same as the JSON configuration.
 
 ```java
-// TODO
+import com.github.jsr330.spi.config.xml.XmlConfig.XmlConfig;
+
+public class XmlConfigTck {
+    
+    public static Test suite() throws Exception {
+        ClassAnalyser<Map<String, Class<?>[]>> analyser = new InheritanceAnalyser();
+        ClassInjector instancer;
+        ClassScanner scanner = new DefaultClassScanner(new RegExSourceDirFilter(".*javax\\.inject-tck-1\\.jar"), null);
+        
+        XmlConfig config = new XmlConfig(new File("./src/test/resources/tck.xml"));
+        
+        instancer = new DefaultClassInjector(config.getConfig(Thread.currentThread().getContextClassLoader()));
+        
+        Injector injector = new Injector(Thread.currentThread().getContextClassLoader(), scanner, analyser, instancer);
+        Car car = injector.getInstance(Car.class);
+        return Tck.testsFor(car, true, true);
+    }
+    
+}
 ```
 
-### Write your own ClassInjector
+```xml
+<?xml version="1.0"?>
+<config xmlns="http://jsr-330.github.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jsr-330.github.com jsr-330-xml-config.xsd">
+
+    <instance classname="org.atinject.tck.auto.Car">
+        <as classname="org.atinject.tck.auto.Convertible"/>
+    </instance>
+
+    <instance classname="org.atinject.tck.auto.Seat">
+        <as classname="org.atinject.tck.auto.DriversSeat"/>
+        <when>
+            <qualifierIs classname="org.atinject.tck.auto.Drivers"/>
+        </when>
+    </instance>
+
+    <instance classname="org.atinject.tck.auto.Tire">
+        <as classname="org.atinject.tck.auto.accessories.SpareTire"/>
+        <when>
+            <isNamed value="spare"/>
+        </when>
+    </instance>
+
+</config>
+```
+
+The XSD file can be found under ``src/main/resources`` or in the root of the jar file.
+
+#### Write your own TypeConfig
+
+A TypeConfig is simply a repository for type configurations and provider. A ``ClassInjector`` asks a TypeConfig for a provider or a TypeContainer and,
+if not returning a ``null`` value, use the result to instantiate a specific type. The TypeConfig don't have to be complete.
+It doesn't need to return a configuration for every Type the ClassInjector asks for. So you can only configure the some special types,
+like a specific type as a singleton, and leave the rest to the automatic type binding mechanism (assuming using the DefaultClassInjector).
 
 ```java
-// TODO
+public interface TypeConfig {
+    
+    <T> Provider<T> getProvider(ClassInjector injector, Class<T> type, Map<String, Class<? extends T>[]> inheritanceTree, Annotation qualifier,
+            ClassLoader classLoader);
+    
+    <T> TypeContainer getTypeContainer(ClassInjector injector, Class<T> type, Map<String, Class<? extends T>[]> inheritanceTree, Annotation qualifier,
+            ClassLoader classLoader);
+    
+}
+
+public class ExampleTypeConfig implements TypeConfig {
+    
+    @Override
+    public <V> Provider<V> getProvider(final ClassInjector injector, final Class<V> type, final Map<String, Class<? extends V>[]> inheritanceTree,
+            final Annotation qualifier, final ClassLoader classLoader) {
+        
+        // pretty simple implementation: just redirect the instantiation request to the ClassInjector
+        return new Provider<V>() {
+            
+            @Override
+            public V get() {
+                return injector.instance(type, inheritanceTree, classLoader, null, qualifier);
+            }
+            
+        };
+    }
+    
+    @Override
+    public <T> TypeContainer getTypeContainer(ClassInjector injector, Class<T> type, Map<String, Class<? extends T>[]> inheritanceTree, Annotation qualifier,
+            ClassLoader classLoader) {
+        TypeContainer container;
+        Class<?> implementation;
+        
+        // if MyInterface is wanted
+        if (type.getName().equals("my.package.MyInterface")) {
+            container = new TypeContainer(null, null);
+            
+            // get the standard information
+            container.gatherInformation();
+            
+            try {
+                implementation = Class.forName("my.package.MyBean", false, classLoader);
+                
+                // set the new values: MyBean (which implements MyInterface), singleton, using default (no args) constructor
+                container.setType(implementation);
+                container.setSingleton(true);
+                
+                container.setInstanceMode(InstanceMode.CONSTRUCTOR);
+                try {
+                    container.setConstructor(implementation.getDeclaredConstructor());
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                container.setFactoryMethod(null);
+                container.setProvider(null);
+                
+                return container;
+            } catch (ClassNotFoundException exception) {
+                exception.printStackTrace();
+            }
+        }
+        
+        return null;
+    }
+    
+}
 ```
 
-### Write your own TypeConfig
+#### ClassInjectors
 
-```java
-// TODO
-```
+The default implementation of a ``ClassInjector`` is ``com.github.jsr330.instance.DefaultClassInjector``.
+It supports ``TypeDeterminators`` and ``TypeConfigs`` as well as automatic type binding.

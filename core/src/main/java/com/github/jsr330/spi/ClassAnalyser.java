@@ -17,8 +17,18 @@ package com.github.jsr330.spi;
 
 import java.util.Map;
 
+import com.github.jsr330.Injector;
+
+/**
+ * A ClassAnalyser gives back information needed by the {@link Injector}.
+ */
 public interface ClassAnalyser<T> {
     
+    /**
+     * Delivers the meta information of the classes passed.
+     * 
+     * @param classes The classes to analyse.
+     */
     T analyse(Map<String, Class<?>> classes);
     
 }

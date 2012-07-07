@@ -17,6 +17,9 @@ import com.github.jsr330.instance.TypeContainer.InstanceMode;
 import com.github.jsr330.spi.ClassInjector;
 import com.github.jsr330.spi.TypeConfig;
 
+/**
+ * The DefaultBinder combines all binder types and a {@link TypeConfig}.
+ */
 public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, TypeBinder<T>, ConditionalBinder<T>, InstancingBinder<T>, TypeConfig {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultBinder.class);
@@ -24,6 +27,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
     protected Map<String, TypeContainerConfig<?>> configs = new HashMap<String, TypeContainerConfig<?>>();
     protected TypeContainerConfig<?> currentConfig;
     
+    /**
+     * Checks if an implementation is not abstract or an interface.
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void checkImplementation() {
         if (currentConfig.getProvider() != null) {
@@ -43,6 +49,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         }
     }
     
+    /**
+     * Gets itself.
+     */
     @Override
     public TypeConfig build() {
         checkImplementation();
@@ -50,6 +59,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return this;
     }
     
+    /**
+     * Puts the specified type to the list of types configured and makes it the current type to configure.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public <V> TypeBinder<V> instance(Class<V> type) {
@@ -59,6 +71,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return (TypeBinder<V>) this;
     }
     
+    /**
+     * Does the bitwise and to the previous condition.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public LinkingBinder<T> and(BindingCondition<T> condition) {
@@ -70,6 +85,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return this;
     }
     
+    /**
+     * Does the bitwise xor to the previous condition.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public LinkingBinder<T> xor(BindingCondition<T> condition) {
@@ -81,6 +99,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return this;
     }
     
+    /**
+     * Does the bitwise or to the previous condition.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public LinkingBinder<T> or(BindingCondition<T> condition) {
@@ -92,6 +113,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return this;
     }
     
+    /**
+     * Marks the current type as singleton if it is instantiable.
+     */
     @Override
     public InstancingBinder<T> asSingleton() {
         currentConfig.setSingleton(true);
@@ -100,12 +124,18 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return this;
     }
     
+    /**
+     * Marks the current type as singleton with the specified implementation.
+     */
     @Override
     public InstancingBinder<T> asSingleton(Class<? extends T> type) {
         as(type);
         return asSingleton();
     }
     
+    /**
+     * defines the implementation for the current type.
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public InstancingBinder<T> as(Class<? extends T> type) {
@@ -115,6 +145,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return this;
     }
     
+    /**
+     * Assigns the provider for the current type.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public ConditionalBinder<T> with(Provider<? extends T> provider) {
@@ -127,6 +160,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return this;
     }
     
+    /**
+     * Assigns the condition of the current configuration.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public LinkingBinder<T> when(BindingCondition<T> condition) {
@@ -138,6 +174,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return this;
     }
     
+    /**
+     * Assigns the constructor to use.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public ConditionalBinder<T> using(Constructor<T> constructor) {
@@ -146,6 +185,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return this;
     }
     
+    /**
+     * Assigns the static factory method to use.
+     */
     @Override
     public ConditionalBinder<T> using(Method factoryMethod) {
         currentConfig.setFactoryMethod(factoryMethod);
@@ -153,6 +195,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return this;
     }
     
+    /**
+     * Gets a provider that uses the specified {@link ClassInjector}.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public <V> Provider<V> getProvider(final ClassInjector injector, final Class<V> type, final Map<String, Class<? extends V>[]> inheritanceTree,
@@ -182,6 +227,9 @@ public class DefaultBinder<T> implements LinkingBinder<T>, InitialBinder<T>, Typ
         return null;
     }
     
+    /**
+     * Gets the container type for the specified type if it is in the list of configured types.
+     */
     @SuppressWarnings("unchecked")
     @Override
     public <V> TypeContainer getTypeContainer(ClassInjector injector, Class<V> type, Map<String, Class<? extends V>[]> inheritanceTree, Annotation qualifier,

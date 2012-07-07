@@ -17,8 +17,16 @@ package com.github.jsr330.spi;
 
 import java.util.Map;
 
+/**
+ * A class scanner is responsible for getting the names of the classes needed for DI.
+ */
 public interface ClassScanner {
     
+    /**
+     * Gets a classname to class mapping back.
+     * 
+     * @param loader The class loader to use for gathering information.
+     */
     Map<String, Class<?>> scan(ClassLoader loader);
     
 }

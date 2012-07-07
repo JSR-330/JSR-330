@@ -2,8 +2,14 @@ package com.github.jsr330.spi.config.builder;
 
 import java.lang.reflect.Constructor;
 
+/**
+ * This is an utility class for constructors.
+ */
 public class Constructors {
     
+    /**
+     * Gets the default (no-args) constructor.
+     */
     @SuppressWarnings("unchecked")
     public static <T> Constructor<T> defaultConstructor(Class<T> type) {
         for (Constructor<?> constructor : type.getDeclaredConstructors()) {
@@ -14,6 +20,9 @@ public class Constructors {
         return null;
     }
     
+    /**
+     * Gets the constructor with the specified parameter set.
+     */
     @SuppressWarnings("unchecked")
     public static <T> Constructor<T> constructor(Class<T> type, Class<?>... arguments) {
         Class<?>[] parameters;
