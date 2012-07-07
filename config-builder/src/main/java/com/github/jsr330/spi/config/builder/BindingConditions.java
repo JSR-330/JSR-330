@@ -4,16 +4,26 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 
 import javax.inject.Named;
+import javax.inject.Qualifier;
 
 import com.github.jsr330.spi.ClassInjector;
 
+/**
+ * This is an utility class for some common condition for binding.
+ */
 public class BindingConditions {
     
+    /**
+     * Checks if an annotation is present for the instance that has to be instanced.
+     */
     @SuppressWarnings("unchecked")
     public static <T> BindingCondition<T> annotationIsPresent(Class<? extends T> type, Class<? extends Annotation> annotation) {
         return anyAnnotationIsPresent(type, annotation);
     }
     
+    /**
+     * Checks if a type should be instanced using a specific {@link Qualifier}.
+     */
     public static <T> BindingCondition<T> qualifierIs(Class<? extends T> type, final Class<? extends Annotation> expectedQualifier) {
         return new BindingCondition<T>() {
             
@@ -26,6 +36,9 @@ public class BindingConditions {
         };
     }
     
+    /**
+     * Checks if a type should be instanced with a special named implementation.
+     */
     public static <T> BindingCondition<T> isNamed(Class<? extends T> type, final CharSequence value) {
         return new BindingCondition<T>() {
             
@@ -38,6 +51,9 @@ public class BindingConditions {
         };
     }
     
+    /**
+     * Checks if a type should be instanced with a special named implementation (ignoring the case).
+     */
     public static <T> BindingCondition<T> isNamedIgnoringCase(Class<? extends T> type, final CharSequence value) {
         return new BindingCondition<T>() {
             
@@ -50,6 +66,9 @@ public class BindingConditions {
         };
     }
     
+    /**
+     * Checks if a type should be instanced with all specified annotations.
+     */
     public static <T> BindingCondition<T> allAnnotationsArePresent(Class<? extends T> type, final Class<? extends Annotation>... annotations) {
         return new BindingCondition<T>() {
             
@@ -80,6 +99,9 @@ public class BindingConditions {
         };
     }
     
+    /**
+     * Checks if a type should be instanced with any of the specified annotations.
+     */
     public static <T> BindingCondition<T> anyAnnotationIsPresent(Class<? extends T> type, final Class<? extends Annotation>... annotations) {
         return new BindingCondition<T>() {
             
@@ -109,6 +131,9 @@ public class BindingConditions {
         };
     }
     
+    /**
+     * Combines the specified conditions using a bitwise and.
+     */
     public static <T> BindingCondition<T> and(final BindingCondition<T>... conditions) {
         return new BindingCondition<T>() {
             
@@ -130,6 +155,9 @@ public class BindingConditions {
         };
     }
     
+    /**
+     * Combines the specified conditions using a bitwise or.
+     */
     public static <T> BindingCondition<T> or(final BindingCondition<T>... conditions) {
         return new BindingCondition<T>() {
             
@@ -152,6 +180,9 @@ public class BindingConditions {
         };
     }
     
+    /**
+     * Combines the specified conditions using a bitwise xor.
+     */
     public static <T> BindingCondition<T> xor(final BindingCondition<T> condition1, final BindingCondition<T> condition2) {
         return new BindingCondition<T>() {
             

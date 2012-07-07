@@ -24,10 +24,17 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jsr330.spi.TypeDeterminator;
 
+/**
+ * This TypeDeterminator chooses the candidate implementation using the annotations defined in JSR-330.
+ */
 public class DefaultTypeDeterminator implements TypeDeterminator {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTypeDeterminator.class);
     
+    /**
+     * Check for {@link Named} and tries to get the implementation named &lt;name&gt;&lt;typename&gt;.
+     * E.g.: Tire will be instanced as SpareTire if named "spare".
+     */
     @SuppressWarnings("unchecked")
     @Override
     public <T> Class<T> determineClass(Class<T> type, Class<? extends T>[] candidates, Annotation qualifier, ClassLoader classLoader) {

@@ -22,6 +22,9 @@ import javax.inject.Provider;
 
 import com.github.jsr330.spi.ClassInjector;
 
+/**
+ * A simple provider that delegates the instantiation to the {@link ClassInjector} back when {@link #get()} is called.
+ */
 public class SimpleProvider<T> implements Provider<T> {
     
     protected Class<T> type;
