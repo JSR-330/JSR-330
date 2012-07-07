@@ -15,8 +15,16 @@
  */
 package com.github.jsr330;
 
+/**
+ * A generic interface for filtering.
+ */
 public interface GenericFilter<T> {
     
+    /**
+     * Accepts or denies the specified value.
+     * 
+     * @param value The value to filter.
+     */
     boolean filter(T value);
     
 }

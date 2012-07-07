@@ -1,5 +1,8 @@
 package com.github.jsr330.spi.config.builder;
 
+/**
+ * A special binder exception.
+ */
 public class BinderException extends RuntimeException {
     
     private static final long serialVersionUID = 3546496886629517153L;

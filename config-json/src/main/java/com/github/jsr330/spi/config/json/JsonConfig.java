@@ -21,14 +21,17 @@ import java.util.Iterator;
 
 import javax.inject.Provider;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jsr330.spi.TypeConfig;
+import com.github.jsr330.spi.config.builder.Binder;
+import com.github.jsr330.spi.config.builder.BinderException;
 import com.github.jsr330.spi.config.builder.BindingCondition;
+import com.github.jsr330.spi.config.builder.BindingConditions;
 import com.github.jsr330.spi.config.builder.ConditionalBinder;
 import com.github.jsr330.spi.config.builder.ConfigBuilder;
 import com.github.jsr330.spi.config.builder.InitialBinder;
@@ -36,6 +39,9 @@ import com.github.jsr330.spi.config.builder.InstancingBinder;
 import com.github.jsr330.spi.config.builder.LinkingBinder;
 import com.github.jsr330.spi.config.builder.TypeBinder;
 
+/**
+ * This is a {@link ConfigBuilder}-based, Json-sources {@link TypeConfig}-Builder.
+ */
 public class JsonConfig {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonConfig.class);
@@ -71,6 +77,10 @@ public class JsonConfig {
         this.source = source;
     }
     
+    /**
+     * Gets the type configs out of the json source.
+     * A wrong sequence will lead to a {@link BinderException}.
+     */
     public TypeConfig getConfig(ClassLoader loader) throws JsonProcessingException, IOException {
         JsonNode node;
         ConfigBuilder builder = new ConfigBuilder();
@@ -96,6 +106,9 @@ public class JsonConfig {
         return null;
     }
     
+    /**
+     * Parses the Json file for {@link Binder} methods (the keys have the same name as the methods in the {@link Binder}-interfaces).
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void parseConfig(ClassLoader loader, InitialBinder<?> binder, JsonNode node) {
         JsonNode classConfig, typeNode, instancingNode, linkingNode, methodNode, constructorNode, parametersNode, conditionalNode;
@@ -108,13 +121,13 @@ public class JsonConfig {
         Class<?> implementation = null, type;
         
         if (node.isObject()) {
-            tmp = node.getFieldNames().next();
+            tmp = node.fieldNames().next();
             classConfig = node.get(tmp);
             
             try {
                 type = Class.forName(tmp, false, loader);
                 typeBinder = binder.instance(type);
-                names = classConfig.getFieldNames();
+                names = classConfig.fieldNames();
                 
                 if (names.hasNext()) {
                     tmp = names.next();
@@ -206,6 +219,26 @@ public class JsonConfig {
         }
     }
     
+    /**
+     * Parses a condition with the following restrictions:
+     * 
+     * <ul>
+     * <li>a condition need to start with "$&lt;condition&gt;(" and end with ")"</li>
+     * <li>a condition needs to be a string or a comma-separated string</li>
+     * <li>a condition can be one of the following commands:
+     *     <ul>
+     *     <li>annotationIsPresent (string)</li>
+     *     <li>qualifierIs (string)</li>
+     *     <li>isNamed (string)</li>
+     *     <li>isNamedIgnoringCase (string)</li>
+     *     <li>allAnnotationsArePresent (comma-separated string)</li>
+     *     <li>anyAnnotationIsPresent (comma-separated string)</li>
+     *     </ul>
+     * </li>
+     * </ul>
+     * 
+     * These command correspond to those in {@link BindingConditions}.
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected BindingCondition<?> parseCondition(ClassLoader loader, String condition, Class<?> type) throws ClassNotFoundException {
         String[] values;

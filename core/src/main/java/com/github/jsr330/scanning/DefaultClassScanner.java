@@ -33,6 +33,10 @@ import org.slf4j.LoggerFactory;
 import com.github.jsr330.GenericFilter;
 import com.github.jsr330.spi.ClassScanner;
 
+/**
+ * A ClassScanner that used a classname and a source filter to optimize scanning.
+ * This ClassScanner can be based on another ClassScanner to avoid the rescanning of base classes.
+ */
 public class DefaultClassScanner implements ClassScanner {
     
     private static final Pattern FILE_SEPARATOR_REGEX = Pattern.compile("\\" + System.getProperty("file.separator"));

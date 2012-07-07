@@ -17,8 +17,20 @@ package com.github.jsr330.spi;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * A TypeDeterminator chooses the one implementation of a type based on the meta data passed it {@link #determineClass(Class, Class[], Annotation, ClassLoader)}.
+ */
 public interface TypeDeterminator {
     
+    /**
+     * Gives back the type to instance.
+     * 
+     * @param type The type to choose an implementation for.
+     * @param candidates The known implementations.
+     * @param qualifier A possible annotation for the specific instance - can be {@code null}.
+     * @param classLoader The class loader to ask for implementations.
+     * @return Returns an instantiable candidate from the candidate list.
+     */
     <T> Class<T> determineClass(Class<T> type, Class<? extends T>[] candidates, Annotation qualifier, ClassLoader classLoader);
     
 }

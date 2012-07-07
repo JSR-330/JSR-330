@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 
 import javax.inject.Provider;
 
+/**
+ * A container for the configuration of a type.
+ */
 class TypeContainerConfig<V> {
     
     protected Provider<? extends V> provider;

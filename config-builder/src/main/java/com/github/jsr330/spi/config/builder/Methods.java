@@ -3,12 +3,21 @@ package com.github.jsr330.spi.config.builder;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+/**
+ * This is an utility class for method
+ */
 public class Methods {
     
+    /**
+     * Gets the static method with the specified parameter set.
+     */
     public static <T> Method factoryMethod(Class<T> type, Class<?>... arguments) {
         return factoryMethod(type, null, arguments);
     }
     
+    /**
+     * Gets the static method with the specified parameter set and name.
+     */
     public static <T> Method factoryMethod(Class<T> type, String name, Class<?>... arguments) {
         Class<?>[] parameters;
         boolean equals;
