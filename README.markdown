@@ -28,7 +28,7 @@ Apache 2.0 License (http://www.apache.org/licenses/LICENSE-2.0)
 <dependency>
     <groupId>com.github.jsr-330</groupId>
     <artifactId>core</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
