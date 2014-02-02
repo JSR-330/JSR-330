@@ -381,3 +381,7 @@ public class ExampleTypeConfig implements TypeConfig {
 
 The default implementation of a ``ClassInjector`` is ``com.github.jsr330.instance.DefaultClassInjector``.
 It supports ``TypeDeterminators`` and ``TypeConfigs`` as well as automatic type binding.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/JSR-330/jsr-330/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
