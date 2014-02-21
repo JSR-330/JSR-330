@@ -385,3 +385,7 @@ It supports ``TypeDeterminators`` and ``TypeConfigs`` as well as automatic type 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/JSR-330/jsr-330/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/rstiller/jsr-330/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
